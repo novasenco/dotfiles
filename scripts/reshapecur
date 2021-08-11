@@ -1,0 +1,24 @@
+#!/usr/bin/bash
+
+# EXPLANATION:
+#   1) click+drag to draw rectangle and reshape current window to rectangle
+
+# NOTE: this doesn't seem to work in desktop environments like xfce4
+
+# DEPENDENCIES:
+#   bash, grep, cut
+#   xwininfo, slop, xdotool, xdo
+
+I="$(xdo id)"
+
+xwininfo -t"$I"
+eval "$(xdotool getwindowfocus getwindowgeometry --shell)"
+WX="$X"
+WY="$Y"
+read -r TX TY TW TH < <(slop -f "%x %y %w %h")
+eval "$(xdotool getmouselocation --shell)"
+
+xdotool mousemove "$WX" "$WY"
+xdo resize -t"$I" -w"$TW" -h"$TH"
+xdo move -t"$I" -x"$TX" -y"$TY"
+xdotool mousemove "$X" "$Y"

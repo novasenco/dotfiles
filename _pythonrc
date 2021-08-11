@@ -1,0 +1,126 @@
+# -*- coding: utf-8 -*-
+# Author: Nova Senco <novasenco at protonmail dot ch>
+# Last Change: 22 April 2021
+
+# Imports {{{1
+
+import atexit
+import subprocess
+import sys
+import tempfile
+import os
+
+# Private Variables {{{1
+
+_VER_ = sys.version_info.major
+_REPL_TMP_DIR_ = None
+_REPL_TMP_FILE_CUR_ = None
+_REPL_TMP_FILE_MAX = None
+_REPL_MODULES_ = []
+_PS_STATE_ = True
+_PS1_DEFAULT_ = ">>> "
+_PS2_DEFAULT_ = "... "
+
+
+# Private Functions {{{1
+
+def _IS_VENV_():
+    return hasattr(sys, 'real_prefix') or hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix
+env_prefix = "\001\x1b[33m\002env\001\x1b[0m\002 " if _IS_VENV_() else ""
+
+_PS1_NEW_ = env_prefix + '\001\x1b[34m\002ℙ{}>\001\x1b[0m\002 '.format('₀₁₂₃₄₅₆₇₈₉'[_VER_] if _VER_ > 2 else u'₀₁₂₃₄₅₆₇₈₉'[_VER_].encode('utf-8'))
+_PS2_NEW_ = env_prefix + '\001\x1b[33m\002  >\001\x1b[0m\002 '
+
+sys.ps1 = _PS1_NEW_
+sys.ps2 = _PS2_NEW_
+
+def _REPL_EXIT_():
+    if _REPL_TMP_DIR_:
+        import shutil
+        shutil.rmtree(_REPL_TMP_DIR_, ignore_errors=True)
+
+atexit.register(_REPL_EXIT_)
+
+def _IMPORT_REPL_FILE_():
+    if _REPL_TMP_DIR_ not in sys.path:
+        sys.path.append(_REPL_TMP_DIR_)
+    with open(_GET_REPL_FILE_(), 'r') as f:
+        exec(f.read(), globals())
+
+
+def _GET_REPL_FILE_():
+    return os.path.join(_REPL_TMP_DIR_, 'repl{}.py'.format(_REPL_TMP_FILE_CUR_))
+
+def _GET_ED_():
+    envkeys = os.environ.keys()
+    if 'EDITOR' in envkeys:
+        return os.environ.get('EDITOR')
+    elif 'VISUAL' in envkeys:
+        return os.environ.get('VISUAL')
+    else:
+        sys.stderr.write('$EDITOR and $VISUAL not set. Defaulting to `vi`\n')
+        return 'vi'
+
+def FLIP_PROMPT():
+    """ Flip prompt between defaults and fancy prompt """
+    global _PS_STATE_, _PS1_DEFAULT_, _PS2_DEFAULT_, _PS1_NEW_, _PS2_NEW_
+    if _PS_STATE_:
+        sys.ps1 = _PS1_DEFAULT_
+        sys.ps2 = _PS2_DEFAULT_
+    else:
+        sys.ps1 = _PS1_NEW_
+        sys.ps2 = _PS2_NEW_
+    _PS_STATE_ = not _PS_STATE_
+
+
+# Exposed Functions {{{1
+
+def ENEW():
+    """ Edit a new temp file for duration of REPL session """
+    global _REPL_TMP_DIR_, _REPL_TMP_FILE_CUR_, _REPL_TMP_FILE_MAX
+    if _REPL_TMP_DIR_ is None:
+        _REPL_TMP_DIR_ = tempfile.mkdtemp()
+        _REPL_TMP_FILE_CUR_ = 0
+        _REPL_TMP_FILE_MAX = 0
+    else:
+        _REPL_TMP_FILE_MAX += 1
+        _REPL_TMP_FILE_CUR_ = _REPL_TMP_FILE_MAX
+    E()
+
+def ESHOW():
+    """ Show all temp editable files for current REPL """
+    if _REPL_TMP_DIR_:
+        print('repl{}.py -> max: {}'.format(_REPL_TMP_FILE_CUR_, _REPL_TMP_FILE_MAX))
+    else:
+        print('No repl files created. Use `E()` or `ENEW()` to start.')
+
+def E():
+    if _REPL_TMP_DIR_ is None:
+        return ENEW()
+    repl_file = _GET_REPL_FILE_()
+    system = subprocess.call if _VER_ == 2 else subprocess.run
+    system([_GET_ED_(), repl_file])
+    _IMPORT_REPL_FILE_()
+
+def ENEXT():
+    global _REPL_TMP_FILE_CUR_
+    if _REPL_TMP_DIR_ is None:
+        print('No repl files created. Use `E()` or `ENEW()` to start.')
+        return
+    if _REPL_TMP_FILE_CUR_ >= _REPL_TMP_FILE_MAX:
+        ENEW()
+    else:
+        _REPL_TMP_FILE_CUR_ += 1
+        E()
+
+def EPREV():
+    global _REPL_TMP_FILE_CUR_
+    if _REPL_TMP_DIR_ is None:
+        print('No repl files created. Use `E()` or `ENEW()` to start.')
+        return
+    if _REPL_TMP_FILE_CUR_ <= 0:
+        ENEW()
+    else:
+        _REPL_TMP_FILE_CUR_ -= 1
+        E()
+

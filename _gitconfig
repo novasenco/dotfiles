@@ -1,0 +1,23 @@
+[user]
+  name = novasenco
+  email = novasenco@protonmail.ch
+[alias]
+  l = pull
+  a = add
+  c = commit -v
+  p = push
+  cl = clone
+  co = checkout
+  br = branch
+  st = status
+  d = diff
+[credential]
+  helper = cache
+[commit]
+  gpgsign = false
+[gpg]
+  program = gpg
+[pull]
+  rebase = false
+[init]
+	defaultBranch = main

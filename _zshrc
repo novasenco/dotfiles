@@ -1,0 +1,370 @@
+# Author: Nova Senco
+# Last Change: 10 August 2021
+
+# Init: {{{1
+
+# if not interactive, return
+[[ $- != *i* ]] && return
+
+# [ -f "$HOME/.profile" ] && source "$HOME/.profile"
+
+if [[ $TERM == xterm ]]; then
+  export TERM=xterm-256color
+fi
+
+autoload -U edit-command-line
+zle -N edit-command-line # load widget
+zle -N up-line-or-beginning-search # load widget
+zle -N down-line-or-beginning-search # load widget
+
+# pure prompt
+# ###########
+# auto-install
+# https://github.com/sindresorhus/pure
+if ! [[ -d ~/.zsh/pure ]]
+then
+  read $'yn?\e[34m"pure" is not installed. Install? [Y/n]\e[0m '
+  if [[ -z $yn ]] || [[ ${yn[1]} = y ]]
+  then
+    mkdir -p ~/.zsh
+    git clone https://github.com/sindresorhus/pure ~/.zsh/pure \
+      || >&2 echo Error cloning pure
+  fi
+fi
+if [[ -d ~/.zsh/pure ]]
+then
+  autoload -U promptinit
+  fpath+=("$HOME/.zsh/pure")
+  promptinit
+  export PURE_PROMPT_SYMBOL='>'
+  export PURE_PROMPT_VICMD_SYMBOL='<'
+  prompt pure
+fi
+
+# no "flow control"
+# stty -ixon
+
+# complete from middle of word
+zstyle ':completion:*' completer _complete
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+l:|=* r:|=*'
+
+# fix ESC delay in insert mode (in zsh vi-mode)
+# https://superuser.com/questions/476532/how-can-i-make-zshs-vi-mode-behave-more-like-bashs-vi-mode
+export KEYTIMEOUT=1
+
+export HISTFILE=~/.zsh_history
+export HISTSIZE=10000
+export SAVEHIST=10000
+setopt hist_expire_dups_first
+setopt hist_ignore_dups
+setopt hist_ignore_space
+setopt hist_verify
+setopt inc_append_history
+setopt share_history
+setopt appendhistory
+# setopt +o nomatch
+setopt null_glob
+
+# set up dir colors
+if type gdircolors &>/dev/null; then
+  eval "$(gdircolors -b $HOME/.dircolors)"
+elif type dircolors &>/dev/null; then
+  eval "$(dircolors -b $HOME/.dircolors)"
+fi
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+
+# Aliases {{{1
+
+# ls
+type gls &>/dev/null && alias ls='gls --color=auto' || alias ls='ls --color=auto'
+alias la='ls -A'
+alias ll='ls -lA'
+alias lh='ls -d .*'
+
+# grep color option
+export GREP_COLOR='auto'
+
+# short forms
+alias v='nvim'            # editing
+alias z='zathura --fork'  # pdf viewing
+alias f='feh'             # image viewing
+alias m='mpv'             # video viewing
+
+# config: https://wiki.archlinux.org/index.php/Dotfiles
+alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+
+# Mappings {{{1
+
+bindkey -v
+bindkey '^P' up-history
+bindkey '^N' down-history
+bindkey '^?' backward-delete-char
+bindkey '^h' backward-delete-char
+
+# edit line in vim with c_CTRL-X_E, c_CTRL-X_CTRL_E, or V (vi mode)
+bindkey '^xe' edit-command-line
+bindkey '^x^e' edit-command-line
+bindkey -M vicmd V edit-command-line
+
+# [up]   ==> search backwards through history using current text on prompt line
+# [down] ==> search forwards through history using current text on prompt line
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+bindkey "${terminfo[kcuu1]}" up-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search
+bindkey "${terminfo[kcud1]}" down-line-or-beginning-search
+bindkey "^[[B" down-line-or-beginning-search
+
+# [home] ==> beginning of line
+# [end]  ==> end of line
+bindkey "${terminfo[khome]}" beginning-of-line
+bindkey "${terminfo[kend]}" end-of-line
+
+# [left]  ==> go left a char
+# [right] ==> go right a char
+bindkey "${terminfo[kcub1]}" backward-char
+bindkey "${terminfo[kcuf1]}" forward-char
+
+# [ctrl]+[left]  ==> go left one word
+# [ctrl]+[right] ==> go right one word
+if [[ $TERM =~ rxvt.* ]]; then
+  bindkey "Od" backward-word
+  bindkey "Oc" forward-word
+else
+  bindkey "[1;5D" backward-word
+  bindkey "[1;5C" forward-word
+fi
+
+# functions {{{1
+
+autoload -U compinit
+compinit
+
+function _tmatt() {
+  local -a sessions
+  sessions=($(tmux ls 2>/dev/null | cut -d: -f1))
+  _describe -t sessions 'tmux sessions' sessions
+}
+
+compdef _tmatt tmatt
+
+# tmux:
+#  ls if no args
+#  attach if $1 exists as a session
+#  new session if $1 is not a session
+function tmatt() {
+  if [[ $# -eq 0 ]]; then
+    d="$(basename "$(pwd)")"
+    tmux attach -t "$d" 2>/dev/null || tmux new -s "$d"
+  elif [[ $# -eq 1 ]]; then
+    tmux attach -t "$1" 2>/dev/null || tmux new -s "$1"
+  else
+    tmux attach -t "$1" 2>/dev/null || tmux new -s "$1" "$2"
+  fi
+}
+
+function _tms() {
+  local -a dirs
+
+  dirs=( ~/Desktop/current_semester/*(N/:t) )
+  dirs=( ${(@)dirs//:/\\:} )
+  dirs=( ${(@)dirs/[ -]##/:} )
+
+  _describe -t courses 'course number' dirs
+}
+
+
+compdef _tms tms
+# tmux for school
+tms(){
+  a=''
+  d='school'
+  if [ $# -gt 0 ]; then
+    # directories in ~/Desktop/current_semester expected to look like:
+    # "ABC1234 - Class Name" where "ABC123" is the course number
+    for c in "$HOME/Desktop/current_semester/"*; do
+      b="$(basename "$c" | cut -d' ' -f1)"
+      if [[ "$b" =~ "$1" ]]; then
+        a="$b"
+        d="$c"
+        break
+      fi
+    done
+  fi
+  [ -z "$a" ] && a="school"
+  if [ "$a" = "school" ]; then
+    (cd ~/Desktop/current_semester; tmatt "$a")
+  elif [ -n "$d" ]; then
+    (cd "$d"; tmatt "$a")
+  else
+    tmatt "$a"
+  fi
+}
+
+# # man + neovim = ♥
+# function man(){
+#   if ! [[ -t 0 && -t 1 && -t 2 ]]; then
+#     command man "$@"
+#     return
+#   fi
+#   if [ $# -eq 0 ]; then
+#     echo 'What manual page do you want?'
+#     return 0
+#   elif ! man -d "$@" &> /dev/null; then
+#     echo 'No manual entry for '"$*"
+#     return 1
+#   fi
+#   nvim +"silent Man $*" +'silent only'
+#   # man "$*" | nvim
+# }
+
+# # info + vim = ♥
+# function info(){
+#   if ! [[ -t 0 && -t 1 && -t 2 ]]; then
+#     command info "$@"
+#     return
+#   fi
+#   vim +"silent Info $1" +'silent only'
+# }
+
+# mount USB with user priveledges
+function usrmnt(){
+  if [ -z "$1" ] || [ -z "$2" ]; then
+    >&2 echo 'required parameters: [mount] [directory] (eg: usrmnt /dev/sdb usb)'
+    return 1
+  fi
+  if ! [ -b "$1" ]; then
+    >&2 echo 'first parameter, [mount], must be a block special'
+    return 2
+  fi
+  if ! [ -d "$2" ]; then
+    mkdir -p "$2"
+  fi
+  # use su .. idgaf .. I'm a honey badger
+  printf "Root "
+  su -c "mount -o gid=users,fmask=113,dmask=002 "$1" "$2""
+}
+
+# convert .docx to .pdf
+function doc2pdf {
+  if type libreoffice &>/dev/null; then
+    local loffice="$(which libreoffice)"
+  elif type soffice &>/dev/null; then
+    local loffice="$(which soffice)"
+  else
+    >&2 echo 'neither libreoffice nor soffice detected'
+    return 1
+  fi
+  "$loffice" --headless --convert-to pdf $1 --outdir ./
+}
+
+# Plugins {{{1
+
+# zsh autosuggestions
+# ###################
+# auto-install
+if ! [[ -f ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ]]
+then
+  read $'yn?\e[34m"zsh-autosuggestions" is not installed. Install? [Y/n]\e[0m '
+  if [[ -z $yn ]] || [[ ${yn[1]} = y ]]
+  then
+    mkdir -p ~/.zsh
+    git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions \
+      || >&2 echo Error cloning zsh-autosuggestions
+  fi
+fi
+# setup
+if [[ -f ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ]]
+then
+  source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+  export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
+  bindkey '^[h' autosuggest-clear
+  bindkey '^[l' autosuggest-accept
+  bindkey '^[k' up-line-or-beginning-search
+  bindkey '^[j' down-line-or-beginning-search
+  bindkey '^[^m' autosuggest-execute
+else
+fi
+
+# syntax highlighting
+# ###################
+# auto-install
+if ! [[ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]
+then
+  read $'yn?\e[34m"zsh-syntax-highlighting" is not installed. Install? [Y/n]\e[0m '
+  if [[ -z $yn ]] || [[ ${yn[1]} = y ]]
+  then
+    mkdir -p ~/.zsh
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting \
+      || >&2 echo Error cloning zsh-syntax-highlighting
+  fi
+fi
+# setup
+if [[ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]
+then
+  setopt interactivecomments
+  source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
+  typeset -A ZSH_HIGHLIGHT_STYLES
+  ZSH_HIGHLIGHT_STYLES[path]='fg=73'
+  ZSH_HIGHLIGHT_STYLES[comment]='fg=244'
+fi
+
+zstyle ':completion:*' menu select
+zmodload zsh/complist
+
+# vi navigation
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+
+# separators chars
+WORDCHARS='*?_-.[]~=/&;!#$%^(){}<>' # the default
+WORDCHARS+=":"
+WORDCHARS='${WORDCHARS:s@/@}'
+
+# fzf
+
+# export FZF_DEFAULT_OPTS='
+#   --color fg:243,bg:-1,hl:73,fg+:251,bg+:240,hl+:80
+#   --color info:251,prompt:251,spinner:73,pointer:73,marker:73
+# '
+
+__fzf_use_tmux__() {
+  [ -n "$TMUX_PANE" ] && [ "${FZF_TMUX:-0}" != 0 ] && [ ${LINES:-40} -gt 15 ]
+}
+
+__fzfcmd() {
+  __fzf_use_tmux__ &&
+    echo "fzf-tmux -d${FZF_TMUX_HEIGHT:-40%}" || echo "fzf"
+  }
+
+# fix bug in zsh
+TRAPWINCH() {
+  zle && { zle reset-prompt; zle -R }
+}
+
+# CTRL-R - Paste the selected command from history into the command line
+fzf-history-widget() {
+local selected num
+setopt localoptions noglobsubst noposixbuiltins pipefail 2> /dev/null
+selected=( $(fc -rl 1 |
+  FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} $FZF_DEFAULT_OPTS -n2..,.. --tiebreak=index \
+  --bind=ctrl-r:toggle-sort $FZF_CTRL_R_OPTS --query=${(qqq)LBUFFER} +m" $(__fzfcmd)) )
+  local ret=$?
+  if [ -n "$selected" ]; then
+    num=$selected[1]
+    if [ -n "$num" ]; then
+      zle vi-fetch-history -n $num
+    fi
+  fi
+  zle reset-prompt
+  return $ret
+}
+zle     -N   fzf-history-widget
+bindkey '^R' fzf-history-widget
+
+
+[ -f "/home/nova/.ghcup/env" ] && source "/home/nova/.ghcup/env" # ghcup-env
+

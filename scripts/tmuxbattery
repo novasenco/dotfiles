@@ -1,0 +1,34 @@
+#!/bin/sh
+
+if [ -d /sys/class/power_supply/ ]; then
+    current_charge="$(cat /sys/class/power_supply/*/charge_now)";
+    total_charge="$(cat /sys/class/power_supply/*/charge_full)";
+elif [ -d /proc/acpi/battery/ ]; then
+    current_charge=$(cat /proc/acpi/battery/*/state | grep 'remaining capacity' | awk '{print $3}');
+    total_charge=$(cat /proc/acpi/battery/*/info | grep 'last full capacity' | awk '{print $4}');
+fi;
+
+CHARGE="$(bc -l <<< "(($current_charge/$total_charge)*100)")";
+STATUS="$(cat /sys/class/power_supply/*/status)";
+
+if [[ $STATUS = Charging ]]; then
+    printf '#[fg=blue] ';
+elif [[ $STATUS = Discharging ]]; then
+	if [[ $(bc -l <<< "$CHARGE < 15") -eq 1 ]]; then
+		printf '#[fg=red] ';
+	elif [[ $(bc -l <<< "$CHARGE < 40") -eq 1 ]]; then
+		printf '#[fg=yellow] ';
+	elif [[ $(bc -l <<< "$CHARGE < 60") -eq 1 ]]; then
+		printf '#[fg=cyan] ';
+	elif [[ $(bc -l <<< "$CHARGE < 80") -eq 1 ]]; then
+		printf '#[fg=green] ';
+	else
+		printf '#[fg=brightcyan] ';
+	fi
+elif [[ $STATUS = Full ]]; then
+	printf '#[fg=cyan]  100%';
+	exit
+else
+    printf '#[fg=magenta]? '
+fi;
+printf "%0.2f%%\n" $CHARGE;

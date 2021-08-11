@@ -1,0 +1,168 @@
+# https://github.com/alacritty/alacritty/blob/master/alacritty.yml
+#
+font:
+  size: 10.0
+
+  # DejaVu Sans Mono (default)
+  normal:
+    family: DejaVu Sans Mono
+    style: Book
+  bold:
+    family: DejaVu Sans Mono
+    style: Bold
+  italic:
+    family: DejaVu Sans Mono
+    style: Oblique
+  bold_italic:
+    family: DejaVu Sans Mono
+    style: Bold Oblique
+
+  # # Hack
+  # normal:
+  #   family: Hack
+  #   style: Regular
+  # bold:
+  #   family: Hack
+  #   style: Bold
+  # italic:
+  #   family: Hack
+  #   style: Italic
+  # bold_italic:
+  #   family: Hack
+  #   style: Bold Italic
+
+  # # Fira Code
+  # normal:
+  #   family: Fira Code
+  #   style: Regular
+  # bold:
+  #   family: Fira Code
+  #   style: Bold
+  # # italic: # no italics
+  # #   family: Fira Code
+  # #   style: Italic
+  # # bold_italic:
+  # #   family: Fira Code
+  # #   style: Bold Italic
+
+  # # Liberation Mono
+  # normal:
+  #   family: Liberation Mono
+  #   style: Regular
+  # bold:
+  #   family: Liberation Mono
+  #   style: Bold
+  # italic:
+  #   family: Liberation Mono
+  #   style: Italic
+  # bold_italic:
+  #   family: Liberation Mono
+  #   style: Bold Italic
+
+  # # Terminus
+  # size: 13
+  # normal:
+  #   family: Terminus
+  #   style: Regular
+  # bold:
+  #   family: Terminus
+  #   style: Bold
+  # # italic: # no italics
+  # #   family: Terminus
+  # #   style: Italic
+  # # bold_italic:
+  # #   family: Terminus
+  # #   style: Bold Italic
+
+# background_opacity: 0.7
+
+colors:
+
+  # nokto
+  primary:
+    background: '#000000'
+    foreground: '#d0d0d0'
+  cursor:
+    cursor: '#d0d0d0'
+    text:   '#000000'
+  normal:
+    black:   '#303030'
+    red:     '#d7005f'
+    green:   '#afd7af'
+    yellow:  '#af8787'
+    blue:    '#87afd7'
+    magenta: '#af87af'
+    cyan:    '#87afaf'
+    white:   '#d0d0d0'
+  bright:
+    black:   '#808080'
+    red:     '#d787af'
+    green:   '#87af5f'
+    yellow:  '#d7af87'
+    blue:    '#5f8787'
+    magenta: '#af87d7'
+    cyan:    '#5faf87'
+    white:   '#e4e4e4'
+  hints:
+    start:
+      foreground: '#000000'
+      background: '#d7af87'
+    end:
+      foreground: '#000000'
+      background: '#af8787'
+  search:
+    matches:
+      foreground: '#000000'
+      background: '#d7af87'
+    focused_matches:
+      foreground: '#000000'
+      background: '#af8787'
+  line_indicator:
+    foreground: '#000000'
+    background: '#af8787'
+
+
+hints:
+  alphabet: "jfkdls;ahgurieowpq"
+
+  enabled:
+
+   # Alt+u -> open URL
+   - regex: "(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"
+     binding:
+       key: U
+       mods: Alt
+     command: xdg-open
+     post_processing: true
+     mouse:
+       enabled: false
+
+   # Alt+Shift+u -> copy URL
+   - regex: "(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"
+     binding:
+       key: U
+       mods: Alt|Shift
+     action: Copy
+     post_processing: true
+     mouse:
+       enabled: false
+
+   # Alt+p -> paste 5+ -letter words
+   - regex: "[a-zA-Z0-9_/.~-]{5,}"
+     binding:
+       key: P
+       mods: Alt
+     action: Paste
+     post_processing: true
+     mouse:
+       enabled: false
+
+   # Alt+Shift+p -> copy 5+ -letter words
+   - regex: "[a-zA-Z0-9_/.~-]{5,}"
+     binding:
+       key: P
+       mods: Alt|Shift
+     action: Copy
+     post_processing: true
+     mouse:
+       enabled: false

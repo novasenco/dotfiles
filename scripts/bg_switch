@@ -1,0 +1,246 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+r"""
+           {1} _______________________________________________________ {0}
+           {1}| | |__   __ _           _____      _(_) |_ ___| |__    \{0}
+           {1}| | '_ \ / _` |         / __\ \ /\ / / | __/ __| '_ \   |{0}
+           {1}| | |_) | (_| |         \__ \\ V  V /| | || (__| | | |  |{0}
+           {1}| |_.__/ \__, |  _____  |___/ \_/\_/ |_|\__\___|_| |_|  |{0}
+           {1} \_______|___/__|_____|_________________________________|{0}
+
+                      {2} oO)-.                       .-(Oo {0}
+                      {2}/__  _\                     /_  __\{0}
+                      {2}\  \(  |     ()~()         |  )/  /{0}
+                      {2} \__|\ |    (-___-)        | /|__/ {0}
+                      {2} '  '--'    ==`-'==        '--'  ' {0}
+
+                           {3}easily switch backgrounds{0}
+"""
+
+from argparse import ArgumentParser, RawDescriptionHelpFormatter as raw_help
+from sys import stderr
+from os import environ as env, getenv, listdir, makedirs, system
+from os.path import abspath, expanduser, expandvars, isdir, isfile, relpath, \
+                    splitext
+
+doc_colors = ('\x1b[0m', '\x1b[34;1m', '\x1b[32m', '\x1b[3;1;33m')
+
+
+def main():
+    global __doc__
+    __doc__ = __doc__.format(*doc_colors)
+
+    parser = ArgumentParser(
+        description=__doc__,
+        formatter_class=raw_help,
+        add_help=False,
+        epilog='{1}linux only{0} with {1}dependencies: {2}feh{0}'.format(
+            '\x1b[0m', '\x1b[1m', '\x1b[34;1m')
+    )
+
+    parser.add_argument('-h', '--help',
+                        help=i('show this help message and exit'),
+                        action='store_true',
+                        default=False
+                        )
+    parser.add_argument('-g', '--get-bg',
+                        help=i('print the current background image and exit'),
+                        action='store_true',
+                        default=False
+                        )
+    parser.add_argument('-b', '--bg-dir',
+                        help=i('the directory containing subdirectories with '
+                               'images or just images (default: '
+                               '~/.backgrounds)'
+                               ),
+                        type=str,
+                        default='~/.backgrounds'
+                        )
+    parser.add_argument('-n', '--no-subdir',
+                        help=i('don\'t use subdirectories in BG_DIR'),
+                        action='store_true',
+                        default=False
+                        )
+    parser.add_argument('-q', '--quiet',
+                        help=i('don\'t print to stdout or stderr'),
+                        action='store_true',
+                        default=False
+                        )
+    parser.add_argument('direction',
+                        type=str,
+                        nargs='?',
+                        help=i('"next" to cycle forward; "prev" to cycle '
+                               'backward \x1b[1m(default: "next")'),
+                        choices=('next', 'prev'),
+                        default='next'
+                        )
+    parser.add_argument('subdir',
+                        type=str,
+                        nargs='?',
+                        help=i('subdirectory inside BG_DIR. Eg, "dark", '
+                               '"light", "nature"; if empty or no matching '
+                               'subdirectory, act like --no-subdir '
+                               '\x1b[1m(default: "")'
+                               ),
+                        default=''
+                        )
+
+    args = parser.parse_args()
+
+    if args.help:
+        parser.print_help()
+        exit(0)
+
+    data_dir = '{}/{}'.format(
+        getenv('XDG_DATA_HOME', env['HOME'] + '/.local/share'),
+        'bg_switch'
+    )
+
+    last_subdir_file = '{}/last_subdir'.format(data_dir)
+
+    if args.get_bg:
+        if isdir(data_dir) and isfile(last_subdir_file):
+            pass
+
+    try:
+        makedirs(data_dir, exist_ok=True)
+    except PermissionError:
+        if not args.quiet:
+            error('ERROR: Could not init data dir (due to permissions): {}'
+                  .format(data_dir), args)
+            exit(1)
+
+    args.bg_dir = abspath(expanduser(expandvars(args.bg_dir))).strip()
+
+    if args.subdir:
+        img_dir = '{}/{}'.format(args.bg_dir, args.subdir)
+        img_data_file = '{}/{}'.format(
+            data_dir,
+            percentify('{}/{}'.format(args.bg_dir, args.subdir))
+        )
+    else:
+        img_dir = args.bg_dir
+        img_data_file = '{}/{}'.format(data_dir, percentify(args.bg_dir))
+
+    if not isdir(img_dir):
+        if not args.quiet:
+            error('ERROR: {} is not a directory'.format(relpath(img_dir)),
+                  args)
+        exit(2)
+
+    # get sorted list of images with valid extensions in img_dir
+    imgs, err_msg = get_images(img_dir)
+    if err_msg:
+        old_img_dir = img_dir
+        args.subdir = 'dark'
+        img_dir += '/dark'
+        if not args.quiet:
+            error('WARNING: {}\n - defaulting to {}'.format(err_msg, img_dir),
+                  args)
+        imgs, err_msg = get_images(img_dir)
+        if err_msg:
+            if not args.quiet:
+                error('ERROR: No images found in any:\n - {}\n - {}\n'
+                      .format(old_img_dir, img_dir), args)
+            exit(3)
+
+    # try to get current image (cur_img) from data file (default: None)
+    cur_img = None
+    if isfile(img_data_file):
+        with open(img_data_file, 'r') as f:
+            cur_img = f.readline().lstrip().rstrip('\n\r')
+
+    # try to get last subdir (last_subdir) from data file (default: None)
+    last_subdir = ''
+    if isfile(last_subdir_file):
+        with open(last_subdir_file, 'r') as f:
+            last_subdir = f.readline().lstrip().rstrip('\n\r')
+
+    # * move to next / previous image only if the last sudir specified is equal
+    #   to the current subdir;
+    #   - this means that doing 'bg_switch next dark; bg_switch next light;
+    #     bg_switch next dark', for instance will not change the image if
+    #     nothing failes
+    #   - if last_subdir is None, then it will not match args.subdir since
+    #     args.subdir defaults to an empty string
+    # * also, start at index 0 of sorted imgs list if image not found in list
+    #   or there was no previous image specified in the image data file
+    new_img = (
+        imgs[
+            (imgs.index(cur_img) + (
+                0 if (last_subdir != args.subdir)
+                else (1 if args.direction == 'next' else -1)
+            ))
+            % len(imgs)
+        ]
+        if (cur_img and cur_img in imgs)
+        else imgs[0]
+    )
+
+    try:  # try to write the image data file (img_data_file)
+        with open(img_data_file, 'w') as f:
+            f.write(new_img)
+    except (FileNotFoundError, PermissionError):
+        if not args.quiet:
+            error('ERROR: unable to write to image data file: {}\n'
+                  .format(img_data_file), args)
+        exit(4)
+
+    try:  # try to write the last subdir data file
+        with open(last_subdir_file, 'w') as f:
+            f.write(args.subdir)
+    except (FileNotFoundError, PermissionError):
+        if not args.quiet:
+            error('ERROR: unable to write to last subdir data file: {}\n'
+                  .format(last_subdir_file), args)
+        exit(5)
+
+    # nothing failed! finally, switch background (TODO: maybe use subprocess)
+    system('feh --bg-fill {}/{}'.format(img_dir, new_img))
+
+
+def i(msg):  # italicize
+    return '\x1b[3m{}\x1b[0m'.format(msg)
+
+
+def percentify(path):  # convert path separators to percent signs
+    bslash = False
+    rsl = []  # return string list
+    for c in path:
+        if bslash:
+            bslash = False
+        else:
+            if c == '\\':
+                bslash = True
+            elif c == '/':
+                rsl.append('%')
+                continue
+        rsl.append(c)
+    return ''.join(rsl)
+
+
+img_exts = ('.jpg', '.jpeg', '.png', '.gif', '.tif', '.tiff')
+
+
+def get_images(img_dir):  # list images in a directory
+    err_msg = None
+    try:
+        imgs = sorted(tuple(
+            img for img in listdir(img_dir)
+            if splitext(img)[1] in img_exts
+        ))
+    except PermissionError:
+        err_msg = 'unable to list files in image dir: {}'.format(img_dir)
+    if not err_msg and not imgs:
+        err_msg = 'no images in image dir: {}'.format(img_dir)
+    return (imgs, err_msg)
+
+
+def error(err_msg, args):
+    if not args.quiet:
+        stderr.write('{}\n'.format(err_msg))
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,102 @@
+DEFAULTSESSION="xmonad"
+
+if [[ $1 == xterm ]] && [[ -n $2 ]]; then
+  session="$2"
+elif [[ -z $1 ]]; then
+  if [[ -e ~/.WM.default ]]; then
+    session="$(cat $HOME/.WM.default)"
+  else
+    session="$DEFAULTSESSION"
+  fi
+else
+  session="$1"
+fi
+
+# [[ ! -S /tmp/ssh-agent.sock ]] && ssh-agent -a /tmp/ssh-agent.sock > /tmp/ssh-agent.env
+# source /tmp/ssh-agent.env
+
+# keychain ~/.ssh/id_rsa
+# [ -f ~/.keychain/$HOSTNAME-sh ] && . ~/.keychain/$HOSTNAME-sh 2>/dev/null
+# [ -f ~/.keychain/$HOSTNAME-sh-gpg ] && . ~/.keychain/$HOSTNAME-sh-gpg 2>/dev/null
+# export SSH_ASKPASS=ssh-askpass
+
+# xscreensaver -no-capture-stderr -no-splash &
+# [ -f $HOME/.fehbg ] && $HOME/.fehbg &
+
+xrdb $HOME/.Xresources
+
+case $session in
+  awesome )
+    exec awesome;;
+  bspwm )
+    sxhkd &
+    exec bspwm;;
+  budgie-desktop )
+    exec budgie-desktop;;
+  catwm )
+    exec catwm;;
+  cinnamon )
+    cinnamon-screensaver &
+    exec cinnamon-session;;
+  dwm )
+
+        dunst &
+        redshift &
+        unclutter -b &
+        # picom -b &
+        # emacs --daemon &
+        # urxvtd -q -f -o
+        xsetroot -cursor_name left_ptr &
+        # xsetroot -solid '#1c1c1c' &
+        hsetroot -solid '#121212' &
+        mouse_kbd_setup.sh &
+        [[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap &
+
+        slstatus &
+        # touch /tmp/.dwm.keepalive
+        dwm
+        while [ -f /tmp/.dwm.keepalive ]; do
+          dwm
+        done
+        ;;
+      ede )
+        exec startede;;
+      enlightenment )
+        exec enlightenment_start;;
+      fluxbox )
+        exec startfluxbox;;
+      gnome )
+        gnome-screensaver &
+        exec gnome-session;;
+      gnome-classic )
+        # gnome-screensaver &
+        exec gnome-session;;
+      i3|i3wm )
+        exec i3;;
+      icewm )
+        exec icewm-session;;
+      jwm )
+        exec jwm;;
+      kde )
+        exec startkde;;
+      plasma )
+        exec startplasma-x11;;
+      mate )
+        exec mate-session;;
+      monster|monsterwm )
+        exec monsterwm;;
+      notion )
+        exec notion;;
+      openbox )
+        exec openbox-session;;
+      unity )
+        exec unity;;
+      xfce|xfce4 )
+        exec startxfce4;;
+      xmonad )
+        exec xmonad;;
+      * )
+        exec "$session";;
+    esac
+
+# vim: set ft=sh:

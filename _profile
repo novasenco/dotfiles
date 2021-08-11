@@ -1,0 +1,42 @@
+
+if [[ -z $HOST ]]; then
+    export HOST="$(hostname)"
+fi
+if [[ -z $HOSTNAME ]]; then
+    export HOSTNAME="$HOST"
+fi
+
+# export PATH="$PATH:$HOME/scripts:$(ruby -e 'puts Gem.user_dir' 2>/dev/null)/bin"
+export PATH="$PATH:$HOME/scripts"
+
+# export EDITOR=nvim
+export EDITOR=nvim
+export BROWSER=firefox
+# export BROWSER=qutebrowser
+# export TERMINAL=/usr/bin/urxvt
+# export TERMINAL=/usr/bin/urxvtc
+# export TERMINAL=/usr/bin/termite
+export TERMINAL=/usr/local/bin/st
+# export TERMINAL=/usr/bin/alacritty
+
+export VISUAL="$EDITOR"
+
+export PYTHONSTARTUP=~/.pythonrc
+
+# make libre office work better with scrolling
+export SAL_USE_VCLPLUGIN=gtk
+
+# make pycharm work in wm
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+# export MPD_HOST=~/.config/mpd/socket
+
+if [[ $TERM == linux ]]; then
+	setfont /usr/share/kbd/consolefonts/ter-116n.psf.gz 2>/dev/null \
+		|| echo "install terminus-font" 2>&1
+fi
+
+# autostart venv in new tmux window
+if [[ -f ./env/bin/activate ]]; then
+    source ./env/bin/activate
+fi

@@ -1,0 +1,18 @@
+configuration {
+  modi: "drun,window,ssh";
+  width: 60;
+  lines: 6;
+  columns: 2;
+  font: "Ubuntu Bold 14";
+  bw: 4;
+  padding: 40;
+  yoffset: -300;
+  xoffset: 0;
+  show-icons: true;
+  eh: 1;
+  fullscreen: false;
+  color-normal: "#000000, #87afd7, #000000, #303030, #d787af";
+  color-urgent: "#bf616a, #3b4252, #bf616a, #3b4252, #bf616a";
+  color-active: "#8fbcbb, #3b4252, #000000, #3b4252, #8fbcbb";
+  color-window: "#000000, #808080, #3b4252";
+}

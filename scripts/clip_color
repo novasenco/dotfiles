@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from os import system
+from re import match as rematch
+import tkinter as tk
+
+
+if __name__ == '__main__':
+    root = tk.Tk()
+    cb = root.selection_get(selection='CLIPBOARD')
+    if not rematch(r'^#[0-9a-fA-F]{6}$', cb):
+        if rematch(r'^#[0-9a-fA-F]{8}$', cb):
+            cb = cb[:7]
+        else:
+            system('notify-send "clip_color error:" "The clipboard doesn\'t '
+                   'look like a valid hex color:\\n' +
+                   cb.replace('\\', '\\\\\\\\').replace('"', '\\"') + '"')
+            exit(1)
+    root.configure(background=cb)
+    root.bind_all('<KeyPress>', lambda e: root.destroy())
+    app = tk.Frame(master=root)
+    app.mainloop()

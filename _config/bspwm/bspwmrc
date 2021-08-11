@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+
+# xrandr --output eDP-1 --scale .8x.8
+$HOME/scripts/mouse_kbd_setup.sh &
+$HOME/.fehbg &
+compton -b
+# nm-applet &
+# redCount=0
+# function restartRedshift() {
+# 	if ! pgrep -x redshift; then
+# 		redshift-gtk &
+# 		return
+# 	fi
+# 	redCount=$(($redCount + 1))
+# 	sleep 1
+# 	restartRedshift
+# }
+# if ! pgrep -x redshift-gtk; then
+# 	pkill redshift
+# 	restartRedshift &
+# fi
+pgrep -x dunst && pkill dunst; dunst 2>/dev/null &
+pgrep -x sxhkd || sxhkd &
+# pgrep xscreensaver || xscreensaver -no-capture-stderr -no-splash &
+pgrep -x xautolock || xautolock -secure -time 10 -corners '00-+' -cornerdelay 1 -cornerredelay 60 -locker slock &
+pgrep -x polybar || $HOME/.config/polybar/launch-bspwm.sh
+# if [[ $TERMINAL =~ urxvtc$ ]]; then
+# 	pgrep -x urxvtd && pkill -x urxvtd
+#     urxvtd -q -f &
+# fi
+# pgrep -x xbanish || xbanish &
+
+# Global Settings
+# ~~~~~~~~~~~~~~~
+
+# # nord
+# bspc config normal_border_color         '#4C566A'
+# bspc config active_border_color         '#88c0d0'
+# bspc config focused_border_color        '#8fbcbb'
+# bspc config presel_feedback_color       '#3b4252'
+
+# # igemnace
+# bspc config normal_border_color         '#747369'
+# bspc config active_border_color         '#99cc99'
+# bspc config focused_border_color        '#99cc99'
+# bspc config presel_feedback_color       '#393939'
+
+# novum
+bspc config normal_border_color         '#626262'
+bspc config active_border_color         '#00875f'
+bspc config focused_border_color        '#00875f'
+bspc config presel_feedback_color       '#3a3a3a'
+
+bspc config split_ratio                 0.5
+# bspc config status_prefix               ''
+# bspc config external_rules_command      ''
+bspc config initial_polarity            'second_child'
+bspc config directional_focus_tightness 'low'
+bspc config borderless_monocle          true
+bspc config gapless_monocle             false
+bspc config paddingless_monocle         false
+bspc config single_monocle              false
+bspc config pointer_motion_interval     20
+bspc config pointer_modifier            'mod1'
+bspc config pointer_action1             'move'           # left
+bspc config pointer_action2             'focus'          # middle
+bspc config pointer_action3             'resize_corner'  # right
+bspc config click_to_focus              false
+bspc config swallow_first_click         false
+bspc config focus_follows_pointer       false
+bspc config pointer_follows_focus       false
+bspc config pointer_follows_monitor     false
+bspc config ignore_ewmh_focus           false
+bspc config center_pseudo_tiled         true
+bspc config honor_size_hints            false
+bspc config remove_disabled_monitors    false
+bspc config remove_unplugged_monitors   false
+bspc config merge_overlapping_monitors  false
+
+# Monitor and Desktop Settings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+bspc config top_padding             40
+bspc config right_padding           0
+bspc config bottom_padding          0
+bspc config left_padding            0
+
+# Desktop Settings
+# ~~~~~~~~~~~~~~~~
+bspc config window_gap              0
+
+# Node Settings
+# ~~~~~~~~~~~~~
+bspc config border_width            1
+
+# Monitors
+# ~~~~~~~~
+bspc monitor -d term web code school 5 6 7 8 web chat
+
+# Rules
+# ~~~~~
+while [[ $(bspc rule -l | wc -l) -gt 0 ]]; do
+	bspc rule -r head;
+done;
+# bspc rule -a Gimp desktop=^8 follow=off
+# bspc rule -a Firefox desktop=^2 follow=off
+bspc rule -a mpv state=floating
+bspc rule -a Zathura state=tiled
+bspc rule -a Emacs state=tiled
+bspc rule -a '*LibreOffice*' state=tiled
+# bspc rule -a Screenkey manage=off

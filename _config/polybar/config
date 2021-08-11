@@ -1,0 +1,459 @@
+[colors]
+; novum
+bg       = #303030
+black    = #262626
+red      = #ff5f5f
+green    = #00af5f
+yellow   = #ffff87
+blue     = #00afd7
+magenta  = #af87d7
+cyan     = #00afaf
+white    = #e4e4e4
+bblack   = #626262
+bred     = #ff5f5f
+bgreen   = #00af5f
+byellow  = #ffaf5f
+bblue    = #00afd7
+bmagenta = #af87d7
+bcyan    = #00afaf
+bwhite   = #e4e4e4
+darkgreen= #00875f
+orange   = #ff875f
+
+[bar/general]
+monitor = ${env:MONITOR:HDMI-1}
+fixed-center = true
+; sizing (margin: 3px; height: 40)
+offset-x = 3
+offset-y = 3
+margin = 3
+width = 100%:-6
+height = 33
+line-size = 3
+; scroll
+enable-scroll = false
+wrapping-scroll = false
+reverse-scroll = true
+; tray
+tray-position = right
+tray-background = #bb303030
+tray-detached = false
+tray-padding = 3
+padding-right = 3
+; fg/bg
+;; background = ${colors.bg}
+background-0 = #444444
+background-1 = #404040
+background-2 = #3c3c3c
+background-3 = #383838
+background-4 = #343434
+background-5 = #303030
+background-6 = #2c2c2c
+background-7 = #282828
+background-8 = #242424
+background-9 = #202020
+foreground = ${colors.white}
+; modules
+module-right =
+modules-center = date
+modules-right = pkg backlight pulseaudio network battery
+module-margin-left = 2
+module-margin-right = 2
+; font
+font-0 = Ubuntu:pixelsize=14;1
+font-1 = Font Awesome 5 Free Solid:style=Regular:size=14;4
+font-2 = unifont:fontformat=truetype:size=10:antialias=false;0
+font-3 = DejaVu Sans Mono for Powerline:pixelsize=14;1
+
+[bar/bspwm]
+inherit = bar/general
+wm-restack = bspwm xwindow
+override-redirect = false
+enable-ipc = true
+modules-left = bspwm
+
+[module/xwindow]
+type = internal/xwindow
+label = "%title:0:60:..%"
+format-foreground = ${colors.white}
+format-underline = ${colors.bblack}
+label-padding = 4
+
+
+[module/xkeyboard]
+type = internal/xkeyboard
+blacklist-0 = num lock
+
+format-prefix = 
+format-prefix-foreground = ${colors.bblue}
+format-uprefix-nderline = ${colors.bblue}
+
+label-layout = %layout%
+label-layout-foreground = ${colors.bblue}
+; label-layout-underline = ${colors.bblue}
+
+label-indicator-padding = 2
+label-indicator-margin = 1
+label-indicator-background = ${colors.cyan}
+; label-indicator-underline = ${colors.cyan}
+
+
+[module/bspwm]
+type = internal/bspwm
+
+format = <label-state> <label-mode>
+
+; label-separator = ║
+; label-separator-padding = 0
+; label-separator-foreground = ${colors.darkgreen}
+
+ws-icon-0 = term;
+ws-icon-1 = code;
+ws-icon-2 = web;
+ws-icon-3 = chat;
+ws-icon-4 = school;
+ws-icon-default = 
+
+pin-workspaces = true
+strip-wsnumbers = false
+index-sort = false
+enable-click = true
+fuzzy-match = false
+
+label-focused = %index%
+label-focused-background = ${colors.darkgreen}
+label-focused-foreground = ${colors.bg}
+; label-focused-underline = ${colors.green}
+label-focused-padding = 2
+
+label-occupied = %index%
+; label-occupied-underline = ${colors.black}
+label-occupied-padding = 2
+
+label-urgent = %index%
+label-urgent-background = ${colors.red}
+label-urgent-foreground = ${colors.black}
+; label-urgent-underline = ${colors.black}
+label-urgent-padding = 2
+
+label-empty = %index%
+label-empty-foreground = ${colors.bblack}
+label-empty-padding = 2
+
+label-monocle = ""
+label-monocle-foreground = ${colors.green}
+label-monocle-background = ${colors.bg}
+; label-monocle = 
+; label-monocle-foreground = ${colors.green}
+; label-monocle-background = ${colors.bblack}
+label-monocle-padding = 2
+
+label-locked = ""
+label-locked-foreground = ${colors.red}
+label-locked-background = ${colors.bg}
+; label-locked = 
+; label-locked-foreground = ${colors.red}
+; label-locked-background = ${colors.bblack}
+label-locked-padding = 2
+
+label-sticky = ""
+label-sticky-foreground = ${colors.yellow}
+label-sticky-background = ${colors.bg}
+; label-sticky = 
+; label-sticky-foreground = ${colors.yellow}
+; label-sticky-background = ${colors.bblack}
+label-sticky-padding = 2
+
+label-private = ""
+label-private-foreground = ${colors.magenta}
+label-private-background = ${colors.bg}
+; label-private = 
+; label-private-foreground = ${colors.magenta}
+; label-private-background = ${colors.bblack}
+label-private-padding = 2
+
+label-pseudotiled = ""
+label-pseudotiled-foreground = ${colors.blue}
+label-pseudotiled-background = ${colors.bg}
+; label-pseudotiled = 
+; label-pseudotiled-foreground = ${colors.cyan}
+; label-pseudotiled-background = ${colors.bblack}
+label-pseudotiled-padding = 2
+
+label-floating = ""
+label-floating-foreground = ${colors.blue}
+label-floating-background = ${colors.bg}
+; label-floating = 
+; label-floating-foreground = ${colors.blue}
+; label-floating-background = ${colors.bblack}
+label-floating-padding = 2
+
+label-fullscreen = "full"
+label-fullscreen-foreground = ${colors.blue}
+label-fullscreen-background = ${colors.bg}
+; label-fullscreen = 
+; label-fullscreen-foreground = ${colors.blue}
+; label-fullscreen-background = ${colors.bblack}
+label-fullscreen-padding = 2
+
+
+[module/i3]
+type = internal/i3
+pin-workspaces = true
+index-sort = true
+enable-click = false
+enable-scroll = false
+reverse-scroll = false
+
+
+[module/backlight]
+type = internal/backlight
+card = intel_backlight
+
+format = <ramp> <label>
+label-foreground = ${colors.white}
+; label-underline = ${colors.white}
+label = %percentage%%
+
+ramp-0 = 🌕
+ramp-1 = 🌔
+ramp-2 = 🌓
+ramp-3 = 🌒
+ramp-4 = 🌑
+
+bar-width = 10
+bar-indicator = |
+bar-indicator-foreground = ${colors.white}
+; bar-indicator-underline = ${colors.white}
+bar-indicator-font = 2
+bar-fill = ─
+bar-fill-font = 2
+bar-fill-foreground = ${colors.white}
+; bar-fill-underline = ${colors.white}
+bar-empty = ─
+bar-empty-font = 2
+bar-empty-foreground = ${colors.bblack}
+; bar-empty-underline = ${colors.bblack}
+
+
+[module/filesystem]
+type = internal/fs
+interval = 30
+mount-0 = /
+label-mounted-foreground = ${colors.blue}
+; label-mounted-underline = ${colors.blue}
+label-mounted = %mountpoint% %percentage_used%%
+label-unmounted-foreground = ${colors.red}
+label-unmounted = %mountpoint% not mounted
+
+
+[module/cpu]
+type = internal/cpu
+interval = 10
+format-prefix = " "
+format-prefix-foreground = ${colors.blue}
+; format-underline = ${colors.blue}
+label-foreground = ${colors.blue}
+label = %percentage%%
+
+
+[module/memory]
+type = internal/memory
+interval = 10
+format-prefix = " "
+format-prefix-foreground = ${colors.blue}
+; format-underline = ${colors.blue}
+label-foreground = ${colors.blue}
+label = %percentage_used%%
+label-width = 3
+
+
+[module/temperature]
+type = internal/temperature
+thermal-zone = 2
+interval = 10
+warn-temperature = 65
+
+format = <ramp> <label>
+format-warn = <ramp> <label-warn>
+; format-underline = ${colors.blue}
+; format-warn-underline = ${colors.bred}
+
+label-foreground = ${colors.blue}
+label-warn-foreground = ${colors.bred}
+
+label = %temperature-c%
+label-warn = %temperature-c%
+
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+ramp-foreground = ${colors.blue}
+
+[module/network]
+type = internal/network
+interface = wlp2s0
+interval = 4
+; connected
+format-connected = <label-connected>
+format-connected-foreground = ${colors.green}
+format-connected-prefix = 
+format-connected-prefix-padding-right = 1
+label-connected = %essid:0:10:..% %signal%% %downspeed:0:6:..%
+label-connected-foreground = ${colors.green}
+; disconnected
+format-disconnected = <label-disconnected>
+label-disconnected =  %ifname%
+label-disconnected-foreground = ${colors.black}
+label-disconnected-background = ${colors.red}
+; ramp
+;; ramp-signal-0  = 0
+;; ramp-signal-1  = 1
+;; ramp-signal-2  = 2
+;; ramp-signal-3  = 3
+;; ramp-signal-4  = 4
+;; ramp-signal-5  = 5
+;; ramp-signal-6  = 6
+;; ramp-signal-7  = 7
+;; ramp-signal-8  = 8
+;; ramp-signal-9  = 9
+;; ramp-signal-10 = 10
+
+
+[module/date]
+type = internal/date
+
+interval = 10
+format-prefix = 
+; format-background = ${colors.bblack}
+format-foreground = ${colors.white}
+; format-underline = ${colors.cyan}
+format-prefix-padding-left = 1
+format-prefix-padding-right = 1
+date = %d/%m  %H:%M
+date-alt = %a, %d %b %Y, %H:%M %Z
+
+
+[module/pulseaudio]
+type = internal/pulseaudio
+
+; Sink to be used, if it exists (find using `pacmd list-sinks`, name field)
+; If not, uses default sink
+sink = alsa_output.pci-0000_00_1b.0.analog-stereo
+
+; Use PA_VOLUME_UI_MAX (~153%) if true, or PA_VOLUME_NORM (100%) if false
+; Default: true
+use-ui-max = true
+
+; Interval for volume increase/decrease (in percent points) (unreleased)
+; Default: 5
+interval = 5
+
+format-volume = <label-volume>
+label-volume =  %percentage%%
+
+label-volume-foreground = ${colors.cyan}
+; label-volume-underline = ${colors.cyan}
+
+label-muted = %percentage%%
+label-muted-background = ${colors.bcyan}
+label-muted-foreground = ${colors.black}
+; label-muted-underline = ${colors.bcyan}
+
+
+[module/alsa]
+type = internal/alsa
+
+format-volume = <label-volume>
+label-volume =  %percentage%%
+label-volume-foreground = ${colors.cyan}
+; label-volume-underline = ${colors.cyan}
+
+label-muted = %percentage%%
+label-muted-background = ${colors.cyan}
+label-muted-foreground = ${colors.black}
+; label-muted-underline = ${colors.black}
+
+bar-volume-width = 10
+bar-volume-foreground-0 = ${colors.cyan}
+bar-volume-foreground-1 = ${colors.cyan}
+bar-volume-foreground-2 = ${colors.cyan}
+bar-volume-foreground-3 = ${colors.cyan}
+bar-volume-foreground-4 = ${colors.yellow}
+bar-volume-foreground-5 = ${colors.yellow}
+bar-volume-foreground-6 = ${colors.red}
+; bar-volume-gradient = true
+; bar-volume-indicator = |
+; bar-volume-indicator-foreground = ${colors.cyan}
+; bar-volume-indicator-underline = ${colors.cyan}
+; bar-volume-indicator-font = 1
+; bar-volume-fill = ─
+; bar-volume-fill-font = 1
+; bar-volume-fill-foreground = ${colors.cyan}
+; bar-volume-fill-underline = ${colors.cyan}
+; bar-volume-empty = ─
+; bar-volume-empty-font = 1
+; bar-volume-empty-foreground = ${colors.black}
+; bar-volume-empty-underline = ${colors.black}
+
+[module/battery]
+type = internal/battery
+battery = BAT0
+adapter = ADP0
+full-at = 99
+interval = 10
+
+format-charging = <animation-charging> <label-charging>
+label-charging-foreground = ${colors.blue}
+; format-charging-underline = ${colors.blue}
+
+format-discharging = <ramp-capacity> <label-discharging>
+label-discharging-foreground = ${colors.white}
+; format-discharging-underline = ${colors.white}
+
+format-full-prefix =  
+format-full-prefix-foreground = ${colors.blue}
+
+ramp-capacity-0 = 
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-4 = 
+ramp-capacity-0-foreground = ${colors.red}
+ramp-capacity-1-foreground = ${colors.yellow}
+ramp-capacity-2-foreground = ${colors.cyan}
+ramp-capacity-3-foreground = ${colors.green}
+ramp-capacity-4-foreground = ${colors.bcyan}
+ramp-capacity-foreground = ${colors.white}
+
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-3 = 
+animation-charging-4 = 
+animation-charging-foreground = ${colors.blue}
+animation-charging-framerate = 4000
+
+
+[settings]
+screenchange-reload = false
+
+
+[module/pkg]
+type = custom/script
+interval = 300
+format = <label>
+format-foreground = ${colors.red}
+; format-underline = ${colors.red}
+label = %output%
+exec = $HOME/.config/polybar/pkg.sh
+exec-if = ping -qw2 -c1 archlinux.org > /dev/null
+click-left = $HOME/.config/polybar/pkgclick.sh
+click-right = sh -c 'notify-send "checking for updates" ""; $HOME/.config/polybar/pkg.sh; $HOME/.config/polybar/pkgclick.sh'
+
+
+[global/wm]
+; margin-top = 36
+; margin-bottom = 0
+
+; vim:ft=dosini

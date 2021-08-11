@@ -1,0 +1,175 @@
+Config {
+
+   -- appearance
+     font =         "xft:DejaVu Sans Mono:size=11:bold:antialias=true"
+   , bgColor =      "black"
+   , fgColor =      "#d0d0d0"
+   , position =     TopW L 95
+
+   -- layout
+   , sepChar =  "%"   -- delineator between plugin names and straight text
+   , alignSep = "}{"  -- separator between left-right alignment
+   , template =  " %StdinReader%\
+                 \ }{\
+                 \ <fc=#87afaf,#303030> KBD </fc> %kbd%\
+                 -- \ <fc=#87afaf,#303030> CPU </fc> %multicpu%\
+                 -- \ <fc=#87afaf,#303030> MEM </fc> %memory%\
+                 \ <fc=#87afaf,#303030> NET </fc> %dynnetwork%\
+                 \ <fc=#87afaf,#303030> WTHR </fc> %KTLH%\
+                 -- \ <fc=#87afaf,#303030> VOL </fc> %alsa:default:Master%\
+                 \ <fc=#87afaf,#303030> BAT </fc> %battery%\
+                 \ <fc=#87afaf,#303030> DATE </fc> %date%"
+
+   -- general behavior
+   , lowerOnStart =     True    -- send to bottom of window stack on start
+   , hideOnStart =      False   -- start with window unmapped (hidden)
+   , allDesktops =      True    -- show on all desktops
+   , overrideRedirect = True    -- set the Override Redirect flag (Xlib)
+   , pickBroadest =     False   -- choose widest display (multi-monitor)
+   , persistent =       False   -- enable/disable hiding (True = disabled)
+
+   --http://projects.haskell.org/xmobar/#system-monitor-plugins.
+   , commands =
+
+        -- weather monitor
+        [ Run Weather "KTLH" [ "--template", "<fc=#87afd7><skyCondition></fc> <fc=#d787af><tempF></fc>°F <fc=#d787af><rh></fc>% <fc=#d787af><pressure></fc>hPa"
+        -- <fc=#000000,#d787af>E</fc><fc=#000000,#d0d0d0>T</fc><fc=#000000,#d787af>H</fc><fc=#000000,#87afd7>R</fc>
+                             ] 2400
+
+        -- -- volume
+        -- , Run Alsa "default" "Master" [ "--template", "<fc=#d787af><volume></fc>% <status>"
+        --                                 , "--" , "-C" , "#afd7af" , "-O" , "on " , "-c" , "#d787af" , "-o" , "off" ]
+
+        -- network activity monitor (dynamic interface resolution)
+        , Run DynNetwork     [ "--template" , "(<fc=#af87af><dev></fc>) ↑<tx> ↓<rx>"
+                             , "--Low"      , "1000"       -- units: B/s
+                             , "--High"     , "5000"       -- units: B/s
+                             , "--low"      , "#d787af"
+                             , "--normal"   , "#d787af"
+                             , "--high"     , "#d7005f"
+                             ] 20
+
+        -- cpu activity monitor
+        , Run MultiCpu       [ "--template" , "<total0>%|<total1>%"
+                             , "--Low"      , "50"         -- units: %
+                             , "--High"     , "85"         -- units: %
+                             , "--low"      , "#d787af"
+                             , "--normal"   , "#d787af"
+                             , "--high"     , "#d7005f"
+                             ] 30
+
+        -- cpu core temperature monitor
+        , Run CoreTemp       [ "--template" , "<fc=#000000,#af87af> TMP </fc> <core0>°C|<core1>°C"
+                             , "--Low"      , "70"        -- units: °C
+                             , "--High"     , "80"        -- units: °C
+                             , "--low"      , "#d787af"
+                             , "--normal"   , "#d787af"
+                             , "--high"     , "#d7005f"
+                             ] 50
+
+        -- memory usage monitor
+        , Run Memory         [ "--template" ,"<usedratio>%"
+                             , "--Low"      , "20"        -- units: %
+                             , "--High"     , "90"        -- units: %
+                             , "--low"      , "#d787af"
+                             , "--normal"   , "#d787af"
+                             , "--high"     , "#d7005f"
+                             ] 10
+
+        -- battery monitor
+        , Run Battery        [ "--template" , "<acstatus>"
+                             , "--Low"      , "10"        -- units: %
+                             , "--High"     , "90"        -- units: %
+                             , "--low"      , "#d7005f"
+                             , "--normal"   , "#d787af"
+                             , "--high"     , "#d787af"
+
+                             , "--" -- battery specific options
+                                       -- discharging status
+                                       , "-o"	, "<left>% (<timeleft>)"
+                                       -- AC "on" status
+                                       , "-O"	, "<left>% <fc=#d7af87>Charging</fc>"
+                                       -- charged status
+                                       , "-i"	, "<left>% <fc=#87afd7>Charged</fc>"
+                             ] 50
+
+        -- time and date indicator
+        , Run Date           "<fc=#87afd7>%a</fc> <fc=#d787af>%d</fc> <fc=#87afd7>%b</fc> <fc=#d787af>%H</fc>:<fc=#d787af>%M</fc>:<fc=#d787af>%S</fc>" "date" 10
+
+        -- keyboard layout indicator
+        , Run Kbd            [ ("us(dvorak)"     , "<fc=#d787af>DV</fc>")
+                             , ("us"             , "<fc=#87afaf>US</fc>")
+                             ]
+
+        , Run StdinReader
+        ]
+   }
+
+-- vim: set ft=haskell:
+-- Config {
+--         font = "xft:DejaVu Sans Mono:size=11:bold:antialias=true"
+--         , bgColor = "#000000"
+--         , fgColor = "#d0d0d0"
+--         , borderColor = "#646464"
+--         , border = TopB
+--         , position = TopW L 95
+
+--         , template = "%StdinReader% <>\
+--                      \ <fc=#87afaf,#303030> KBD </fc> %kbd%\
+--                      -- \ <fc=#87afaf,#303030> CPU </fc> %multicpu%\
+--                      -- \ <fc=#87afaf,#303030> MEM </fc> %memory%\
+--                      \ <fc=#87afaf,#303030> NET </fc> %dynnetwork%\
+--                      -- \ <fc=#87afaf,#303030> WTHR </fc> %KTLH%\
+--                      -- \ <fc=#87afaf,#303030> VOL </fc> %alsa:default:Master%\
+--                      \ <fc=#87afaf,#303030> BAT </fc> %battery%\
+--                      \ <fc=#87afaf,#303030> DATE </fc> %date%"
+--         , sepChar = "%"
+--         , alignSep = "<>"
+
+--         , lowerOnStart =     True    -- send to bottom of window stack on start
+--         , hideOnStart =      False   -- start with window unmapped (hidden)
+--         , allDesktops =      True    -- show on all desktops
+--         , overrideRedirect = True    -- set the Override Redirect flag (Xlib)
+--         , pickBroadest =     False   -- choose widest display (multi-monitor)
+--         , persistent =       False   -- enable/disable hiding (True = disabled)
+
+--         , commands =  [ Run Weather "CYVR" ["-t","<tempC>C","-L","18","-H","25","--normal","green","--high","red","--low","lightblue"] 36000
+--                       , Run Kbd [ ("us(dvorak)"     , "<fc=#d787af>DV</fc>")
+--                                 , ("us"             , "<fc=#87afaf>US</fc>")
+--                                 ]
+--                       , Run DynNetwork [ "--template" , "(<fc=#af87af><dev></fc>) ↑<tx> ↓<rx>"
+--                                        , "--Low"      , "1000"       -- units: B/s
+--                                        , "--High"     , "5000"       -- units: B/s
+--                                        , "--low"      , "#d787af"
+--                                        , "--normal"   , "#d787af"
+--                                        , "--high"     , "#d7005f"
+--                                        ] 20
+--                       , Run MultiCpu [ "--template" , "<total0>%|<total1>%"
+--                                     , "--Low"      , "50"         -- units: %
+--                                     , "--High"     , "85"         -- units: %
+--                                     , "--low"      , "#d787af"
+--                                     , "--normal"   , "#d787af"
+--                                     , "--high"     , "#d7005f"
+--                                     ] 30
+--                       , Run Battery [ "--template" , "<acstatus>"
+--                                     , "--Low"      , "10"        -- units: %
+--                                     , "--High"     , "90"        -- units: %
+--                                     , "--low"      , "#d7005f"
+--                                     , "--normal"   , "#d787af"
+--                                     , "--high"     , "#d787af"
+--                                     , "--" -- battery specific options
+--                                     , "-o", "<left>% (<timeleft>)"      -- discharging status
+--                                     , "-O", "<fc=#d7af87>Charging</fc>" -- AC "on" status
+--                                     , "-i", "<fc=#87afd7>Charged</fc>"  -- charged status
+--                                     ] 50
+--                       -- , Run Alsa "default" "Master" [ "--template", "<fc=#d787af><volume></fc>% <status>", "--" , "-C" , "#afd7af" , "-O" , "on " , "-c" , "#d787af" , "-o" , "off" ]
+--                       , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
+--                       , Run Memory ["-t","Mem: <usedratio>%"] 10
+--                       , Run Swap [] 10
+--                       , Run Com "uname" ["-s","-r"] "" 36000
+--                       , Run Date "<fc=#87afd7>%a</fc> <fc=#d787af>%d</fc> <fc=#87afd7>%b</fc> <fc=#d787af>%H</fc>:<fc=#d787af>%M</fc>:<fc=#d787af>%S</fc>" "date" 10
+--                       , Run StdinReader
+--                       ]
+--         }
+
+-- -- vim: set ft=haskell:

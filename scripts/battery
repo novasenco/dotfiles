@@ -1,0 +1,22 @@
+#!/bin/sh
+
+if [ -d /sys/class/power_supply/ ]; then
+    current_charge="$(cat /sys/class/power_supply/*/charge_now)";
+    total_charge="$(cat /sys/class/power_supply/*/charge_full)";
+elif [ -d /proc/acpi/battery/ ]; then
+    current_charge=$(cat /proc/acpi/battery/*/state | grep 'remaining capacity' | awk '{print $3}');
+    total_charge=$(cat /proc/acpi/battery/*/info | grep 'last full capacity' | awk '{print $4}');
+fi;
+
+STATUS="$( cat /sys/class/power_supply/*/status )";
+if [[ $STATUS = Charging ]]; then
+    printf "↑ ";
+elif [[ $STATUS = Discharging ]]; then
+    printf "↓ ";
+elif [[ $STATUS = Full ]]; then
+	printf "full";
+	exit
+else
+    printf "? "
+fi;
+printf "%0.2f%%\n" $(bc -l <<< "(($current_charge/$total_charge)*100)");
