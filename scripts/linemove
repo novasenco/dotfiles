@@ -1,0 +1,25 @@
+#!/usr/bin/bash
+
+# EXPLANATION:
+#   1) click+drag to move window in a straight line along furthest travelled
+#      axis
+
+# DEPENDENCIES:
+#   bash, grep, cut
+#   xwininfo, slop, xdotool, xdo
+
+# TODO
+
+# id="$(xdo id)"
+
+# eval "$(xdotool getwindowfocus getwindowgeometry --shell)"
+# WX="$X"
+# WY="$Y"
+# read -r TX TY TW TH ID < <(slop -kf "%x %y %w %h %i")
+# eval "$(xdotool getmouselocation --shell)"
+
+# xdotool mousemove "$WX" "$WY"
+# # xdo resize "$id" -w"$TW" -h"$TH"
+# xdo resize "$id" -w"$TW" -h"$(($TH-21))"
+# xdo move "$id" -x"$TX" -y"$TY"
+# xdotool mousemove "$X" "$Y"

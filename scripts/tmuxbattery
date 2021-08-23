@@ -8,27 +8,27 @@ elif [ -d /proc/acpi/battery/ ]; then
     total_charge=$(cat /proc/acpi/battery/*/info | grep 'last full capacity' | awk '{print $4}');
 fi;
 
-CHARGE="$(bc -l <<< "(($current_charge/$total_charge)*100)")";
-STATUS="$(cat /sys/class/power_supply/*/status)";
+charge="$(printf "($current_charge/$total_charge)*100\n" | bc -l)";
+status="$(cat /sys/class/power_supply/*/status)";
 
-if [[ $STATUS = Charging ]]; then
-    printf '#[fg=blue] ';
-elif [[ $STATUS = Discharging ]]; then
-	if [[ $(bc -l <<< "$CHARGE < 15") -eq 1 ]]; then
-		printf '#[fg=red] ';
-	elif [[ $(bc -l <<< "$CHARGE < 40") -eq 1 ]]; then
-		printf '#[fg=yellow] ';
-	elif [[ $(bc -l <<< "$CHARGE < 60") -eq 1 ]]; then
-		printf '#[fg=cyan] ';
-	elif [[ $(bc -l <<< "$CHARGE < 80") -eq 1 ]]; then
-		printf '#[fg=green] ';
+if [ "$status" = "Charging" ]; then
+    printf '#[fg=magenta] ';
+elif [ "$status" = "Discharging" ]; then
+	if [ "$(printf "$charge < 15\n" | bc -l)" -eq 1 ]; then
+		printf '#[fg=red]  ';
+	elif [ "$(printf "$charge < 40\n" | bc -l)" -eq 1 ]; then
+		printf '#[fg=yellow]  ';
+	elif [ "$(printf "$charge < 60\n" | bc -l)" -eq 1 ]; then
+		printf '#[fg=cyan]  ';
+	elif [ "$(printf "$charge < 80\n" | bc -l)" -eq 1 ]; then
+		printf '#[fg=green]  ';
 	else
-		printf '#[fg=brightcyan] ';
+		printf '#[fg=blue]  ';
 	fi
-elif [[ $STATUS = Full ]]; then
-	printf '#[fg=cyan]  100%';
-	exit
+elif [ "$status" = "Full" ]; then
+	printf '#[fg=blue]   100%%';
+	exit 0;
 else
-    printf '#[fg=magenta]? '
+    printf '#[fg=magenta]?[%s] ' "$status"
 fi;
-printf "%0.2f%%\n" $CHARGE;
+printf '%0.2f%%' "$charge";

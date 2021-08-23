@@ -13,16 +13,23 @@ e=$'\e['
 #     printf "%-${w}s" "${e}48;05;${n}m|${e}0;38;05;${n}m${n}${e}0;48;05;${n}m|${e}0m "
 # }
 
-function pc(){
-    printf "${e}"'38;05;'"${n}"'m%-6s' '('"$n"') '
+pc(){
+  printf "\\033[38;05;${1}m%-6s" "($1) ";
 }
 
-for n in {0..7}; do
-    pc "$n"
-done
-printf '\n'
+n=0;
+while [ "$n" -le 7 ];
+do
+  pc "$n";
+  n="$((n+1))";
+done;
+printf '\n';
 
-for n in {8..15}; do
-    pc "$n"
-done
-printf '\n'
+n=8;
+while [ "$n" -le 15 ];
+do
+    pc "$n";
+    n="$((n+1))";
+done;
+printf '\n';
+

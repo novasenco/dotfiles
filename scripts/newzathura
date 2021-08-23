@@ -1,24 +1,27 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-[ -s /tmp/newzathura-nofork ] && { zathura --fork $@; return; }
-
-if [ -f /tmp/newzathura.xid ]; then
-	zathura --fork "$@" -e $(</tmp/newzathura.xid);
+if [ -r /tmp/newzathura.id ]; then
+  read -r id </tmp/newzathura.id;
+  zathura --fork "$@" -e "$id";
 else
-	( {
-		tabbed -c >/tmp/newzathura.xid &
-		tpid=$!;
-		f=0;
-		for i in {1..10}; do
-			sleep 0.01;
-			[ -s /tmp/newzathura.xid ] || continue;
-			zathura --fork $@ -e $(</tmp/newzathura.xid);
-			f=1;
-			break;
-		done;
-		[ "$f" -eq 0 ] && kill $tpid;
-		wait;
-		rm -f /tmp/newzathura.xid;
-	} &);
+  {
+    tabbed -c >/tmp/newzathura.id &
+    tid="$!";
+    i=0;
+    while [ ! -s /tmp/newzathura.id ];
+    do
+      if [ "$i" -gt 200 ];
+      then
+        kill "$tid";
+        exit 1;
+      fi;
+      i="$((i+1))";
+      sleep 0.01;
+    done;
+    read -r id </tmp/newzathura.id;
+    zathura --fork "$@" -e "$id";
+    wait;
+    rm -f /tmp/newzathura.id;
+  } &
 fi;
 

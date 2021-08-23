@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 #             _
 # __   _____ | |  a simple script to
 # \ \ / / _ \| |  control volume from
@@ -6,258 +6,288 @@
 #   \_/ \___/|_|  a keybinding
 #
 # Author: Nova Senco
-# Last Change: 05 July 2021
+# Last Change: 20 August 2021
 
-VER='1.2'
+version='1.3';
 
 printhelp(){
-  cat <<DONE
+  cat <<EOF
 Usage: $(basename $0) [OPTIONS]
 
  Easily see and change volume with amixer.
 
   Quick Examples:
-   vol -i    # increase volume by 5 to nearest multiple of 5
-   vol -ii   # increase volume by 10 to nearest multiple of 5
-   vol -d    # decrease volume by 5 to nearest multiple of 5
-   vol -t    # toggle mute
-   vol -m    # mute
-   vol -i 5  # increase volume by 5
+    vol -i    # increase volume by 5 to nearest multiple of 5
+    vol -ii   # increase volume by 10 to nearest multiple of 5
+    vol -d    # decrease volume by 5 to nearest multiple of 5
+    vol -t    # toggle mute
+    vol -m    # mute
+    vol -i 5  # increase volume by 5
+    vol -vi   # increase volume and print output to command-line
+    vol -ni   # increase volume and use notify-send to send graphical message
 
-OPTIONS:
- -i --increase [<amt>]  increment volume by <amt> (default: 5)
- -d --decrease [<amt>]  decrement volume by <amt> (default: 5)
- -s --set <amt>         set volume to <amt>
- -x --mixer <mixer>     select <mixer> (when unspecified: "Master")
- -c --card <card>       select <card> (when unspecified: "")
- -m --mute              mute
- -u --unmute            unmute
- -t --toggle            toggle mute
- -q --quiet             don't print or notify; negates -v
- -v --verbose           print to stdout (-vv to debug) and don't notify
- -n --notify            notify (even if -v or -q passed); default if noninteractive
- -N --no-notify         do not notify (even if -n passed or noninteractive)
+  Options:
+    -i --increase [<amt>]  increment volume by <amt> (default: 5)
+    -d --decrease [<amt>]  decrement volume by <amt> (default: 5)
+    -s --set <amt>         set volume to <amt>
+    -x --mixer <mixer>     select <mixer> (when unspecified: "Master")
+    -c --card <card>       select <card> (when unspecified: "")
+    -m --mute              mute
+    -u --unmute            unmute
+    -t --toggle            toggle mute
+    -q --quiet             don't print or notify; negates -v
+    -v --verbose           print to stdout (-vv to debug) and don't notify
+    -n --notify            notify (even with -v/-q); default if noninteractive
+    -N --no-notify         do not notify (even with -n or noninteractive)
 
- -h --help              display this help and exit
- -V --version           display the version and exit
-DONE
-}
+    -h --help              display this help and exit
+    -V --version           display the version and exit
+EOF
+};
 
 argv="$(getopt -n vol \
   -l 'help,version,quiet,verbose,notify,no-notify,increase::,decrease::,set:,mixer:,card:,mute,unmute,toggle' \
   -o 'hVqvnNi::d::s:x:c:mut' -- "$@" \
-  )"
+  )";
 
-[[ $? -ne 0 ]] && exit 1
+if [ "$?" -ne 0 ];
+then
+  exit 1;
+fi;
 
-eval set -- "$argv"
+eval set -- "$argv";
 
-mixer='Master'
-card=''
-voldelta=0
-volstddelta=0
-volset=-1
-mutectl=0
-verbosity=0
-toggle='-1'
-tty -s && notify=0 || notify=1
-nonotify=0
+mixer='Master';
+card='';
+voldelta=0;
+volstddelta=0;
+volset=-1;
+mutectl=0;
+verbosity=0;
+toggle='-1';
+if tty -s;
+then
+  notify=0;
+else
+  notify=1;
+fi;
+nonotify=0;
 
 while true
 do
   case "$1"
-    in
+  in
 
     -h|--help)
-    printhelp;
-    exit 0
-    ;;
+      printhelp;
+      exit 0;
+      ;;
 
-  -V|--version)
-    echo "vol $VER"
-    exit 0
-    ;;
+    -V|--version)
+      echo "vol $version";
+      exit 0;
+      ;;
 
-  -i|--increase)
-    if [[ $2 =~ ^[0-9]+$ ]]
-    then
-      ((voldelta+=$2))
-    else
-      ((volstddelta+=1))
-    fi
-    shift
-    shift
-    ;;
-
-  -d|--decrease)
-    if [[ $2 =~ ^[0-9]+$ ]]
-    then
-      ((voldelta-=$2))
-    else
-      ((volstddelta-=1))
-    fi
-    shift
-    shift
-    ;;
-
-  -s|--set)
-    if [[ ! $2 =~ ^[0-9]+$ ]]
-    then
-      if [[ $verbosity -ge 0 ]]
+    -i|--increase)
+      if printf "$2" | grep -Eq "^[0-9]+$";
       then
-        >&2 echo "vol: invalid option: '$1' requires integer, not '$2'"
-      fi
-      exit 2
-    fi
-    volset="$2"
-    shift
-    shift
-    ;;
+        voldelta="$((voldelta+$2))";
+      else
+        volstddelta="$((volstddelta+1))";
+      fi;
+      shift
+      shift
+      ;;
 
-  -m|--mute)
-    shift
-    ((mutectl++))
-    ;;
+    -d|--decrease)
+      if printf "$2" | grep -Eq '^[0-9]+$';
+      then
+        voldelta="$((voldelta-$2))";
+      else
+        volstddelta="$((volstddelta-1))";
+      fi;
+      shift;
+      shift;
+      ;;
 
-  -u|--unmute)
-    shift
-    ((mutectl--))
-    ;;
+    -s|--set)
+      if ! printf "$2" | grep -Eq '^[0-9]+$';
+      then
+        if [ "$verbosity" -ge 0 ];
+        then
+          >&2 echo "vol: invalid option: '$1' requires integer, not '$2'";
+        fi;
+        exit 2;
+      fi;
+      volset="$2";
+      shift;
+      shift;
+      ;;
 
-  -t|--toggle)
-    shift
-    ((toggle*=-1))
-    ;;
+    -m|--mute)
+      shift;
+      mutectl="$((mutectl+1))";
+      ;;
 
-  -v|--verbose)
-    shift
-    ((verbosity++))
-    ;;
+    -u|--unmute)
+      shift;
+      mutectl="$((mutectl-1))";
+      ;;
 
-  -q|--quiet)
-    shift
-    ((verbosity--))
-    ;;
+    -t|--toggle)
+      shift;
+      toggle="$((toggle*-1))";
+      ;;
 
-  -n|--notify)
-    shift
-    notify=1
-    ;;
+    -v|--verbose)
+      shift;
+      verbosity="$((verbosity+1))";
+      ;;
 
-  -N|--no-notify)
-    shoft
-    nonotify=1
-    ;;
+    -q|--quiet)
+      shift;
+      verbosity="$((verbosity-1))";
+      ;;
 
-  -x|--mixer)
-    shift
-    mixer="$1"
-    shift
-    ;;
+    -n|--notify)
+      shift;
+      notify=1;
+      ;;
 
-  -c|--card)
-    shift
-    card="$1"
-    shift
-    ;;
+    -N|--no-notify)
+      shift;
+      nonotify=1;
+      ;;
 
-  --)
-    shift
-    break
-    ;;
+    -x|--mixer)
+      shift;
+      mixer="$1";
+      shift;
+      ;;
 
-  esac
-done
+    -c|--card)
+      shift;
+      card="$1";
+      shift;
+      ;;
 
-if [[ -z $card ]]
+    --)
+      shift;
+      break;
+      ;;
+
+  esac;
+done;
+
+if [ -z "$card" ]
 then
-  _card=""
+  _card="";
 else
-  _card="-c "$card""
-fi
+  _card="-c "$card"";
+fi;
 
-read vol on_off < <(amixer get $_card "$mixer" 2>/dev/null \
+IFS=' ' read vol on_off <<EOF
+$(amixer get $_card "$mixer" 2>/dev/null \
   | perl -n -e '/\[(\d+)%\].*\[(on|off)\]$/ && print("$1 $2\n") && exit')
+EOF
+# ;$(# fix syntax hl
 
-if [[ -z $vol ]]
+if [ -z "$vol" ];
 then
-  >&2 echo "Fatal Error: unable to use amixer to get volume information with
-  >\"amixer $_card get $mixer\"."
-  exit 1
-fi
+  >&2 echo "Fatal Error: unable to use amixer to get volume information with \"amixer $_card get $mixer\".";
+  exit 1;
+fi;
 
-if [[ $volstddelta -ne 0 ]]
+if [ "$volstddelta" -ne 0 ];
 then
-  drift=$(( 2-((vol%5+2)%5) ))
-  ((voldelta+=volstddelta*5+drift))
-fi
+  drift="$((2 - ( (vol % 5 + 2) % 5) ))";
+  voldelta="$((voldelta + volstddelta * 5 + drift))";
+fi;
 
-if [[ $volset -ne -1 ]]
+if [ "$volset" -ne -1 ];
 then
-  [[ $verbosity -gt 1 ]] && >&2 echo "> volume = $volset"
-  amixer set $_card "$mixer" "$volset%" >/dev/null
-fi
-
-if [[ $voldelta -ne 0 ]]
-then
-  volsym='+'
-  if [[ $voldelta -lt 0 ]]
+  if [ "$verbosity" -gt 1 ];
   then
-    volsym='-'
-    ((voldelta*=-1))
-  fi
-  [[ $verbosity -gt 1 ]] && >&2 echo "> volume $volsym= $voldelta"
-  amixer set $_card "$mixer" "$voldelta%$volsym" >/dev/null
-fi
+    >&2 echo "> volume = $volset";
+  fi;
+  amixer set $_card "$mixer" "$volset%" >/dev/null;
+fi;
 
-if [[ $toggle -eq 1 ]]
+if [ "$voldelta" -ne 0 ];
 then
-  [[ $verbosity -gt 1 ]] && >&2 echo '> toggling mute'
-  amixer set $_card "$mixer" toggle >/dev/null
+  volsym='+';
+  if [ "$voldelta" -lt 0 ];
+  then
+    volsym='-';
+    voldelta="$((voldelta * -1))";
+  fi;
+  if [ "$verbosity" -gt 1 ];
+  then
+    >&2 echo "> volume $volsym= $voldelta";
+  fi;
+  amixer set $_card "$mixer" "$voldelta%$volsym" >/dev/null;
+fi;
+
+if [ "$toggle" -eq 1 ];
+then
+  if [ "$verbosity" -gt 1 ];
+  then
+    >&2 echo '> toggling mute';
+  fi;
+  amixer set $_card "$mixer" toggle >/dev/null;
 else
-  if [[ $mutectl -gt 0 ]]
+  if [ "$mutectl" -gt 0 ];
   then
-    [[ $verbosity -gt 1 ]] && >&2 echo '> muting'
-    amixer set $_card "$mixer" mute >/dev/null
-  elif [[ $mutectl -lt 0 ]]
+    if [ "$verbosity" -gt 1 ];
+    then
+      >&2 echo '> muting';
+    fi;
+    amixer set $_card "$mixer" mute >/dev/null;
+  elif [ "$mutectl" -lt 0 ];
   then
-    [[ $verbosity -gt 1 ]] && >&2 echo '> unmuting'
-    amixer set $_card "$mixer" unmute >/dev/null
-  fi
-fi
+    if [ "$verbosity" -gt 1 ];
+    then
+      >&2 echo '> unmuting';
+    fi;
+    amixer set $_card "$mixer" unmute >/dev/null;
+  fi;
+fi;
 
-read vol on_off < <(amixer get $_card "$mixer" 2>/dev/null \
+read vol on_off <<EOF
+$(amixer get $_card "$mixer" 2>/dev/null \
   | perl -n -e '/\[(\d+)%\].*\[(on|off)\]$/ && print("$1 $2\n") && exit')
+EOF
+# ;$(# fix syntax hl
 
-mutestr=
-if [[ $on_off == off ]]
+mutestr='';
+if [ "$on_off" = off ]
 then
-  mutestr='muted'
-fi
+  mutestr='muted';
+fi;
 
-if [[ $verbosity -gt 0 ]]
+if [ "$verbosity" -gt 0 ];
 then
-  echo "$vol%${mutestr:+($mutestr)}"
-fi
+  echo "$vol%${mutestr:+($mutestr)}";  # ;$(# fix syntax hl
+fi;
 
-if [[ -n $mutestr ]] || [[ $vol -eq 0 ]]
+if [ -n "$mutestr" ] || [ "$vol" -eq 0 ];
 then
-  icon_name="audio-volume-muted"
-elif [[ $vol -lt 33 ]]
+  icon_name="audio-volume-muted";
+elif [ "$vol" -lt 33 ];
 then
-  icon_name="audio-volume-low"
-elif [[ $vol -lt 67 ]]
+  icon_name="audio-volume-low";
+elif [ "$vol" -lt 67 ];
 then
-  icon_name="audio-volume-medium"
+  icon_name="audio-volume-medium";
 else
-  icon_name="audio-volume-high"
-fi
+  icon_name="audio-volume-high";
+fi;
 
-if [[ $notify -eq 1 && $nonotify -ne 1 ]]
+if [ "$notify" -eq 1 ] && [ "$nonotify" -ne 1 ];
 then
   # pgrep -x dunst >/dev/null && \
   notify-send "${mutestr:-vol}" \
     -i "$icon_name" \
     -h "int:value:$vol" \
-    -h string:synchronous:volume
-fi
+    -h 'string:synchronous:volume';
+fi;

@@ -10,13 +10,7 @@ xset m 5/1 10
 
 # xmodmap -e 'keycode 9 = Escape Caps_Lock'
 
-setxkbmap -layout us,dvorak \
-  -model asus_laptop \
-  -option \
-  -option esperanto:qwerty \
-  -option compose:menu,lv3:ralt_switch,grp:shifts_toggle \
-  \
-  || exit
+setxkbmap -layout us -option -option esperanto:qwerty -option compose:menu,lv3:ralt_switch
 
 # TODO: find touchpad name on new system
 id="$(xinput --list --id-only 'ELAN1200:00 04F3:30BA Touchpad')"
@@ -33,11 +27,18 @@ xmodmap -e "keysym F3 = Pointer_Button3 Pointer_Button3 Pointer_Button3 Pointer_
 xkbset m
 xkbset exp '=m'
 
-# Tab = Escape
-xmodmap -e 'keycode 23 = Escape NoSymbol Escape'
 # Escape = grave
-xmodmap -e 'keycode 9 = grave asciitilde grave asciitilde dead_grave dead_tilde dead_grave'
+# xmodmap -e 'keycode 9 = grave asciitilde grave asciitilde dead_grave dead_tilde dead_grave'
+
+# Escape = Escape
+# xmodmap -e 'keycode 9 = Escape Escape NoSymbol Escape'
+
+# grave = Escape
+# xmodmap -e 'keycode 49 = Escape Escape NoSymbol Escape'
+
 # grave = Tab
-xmodmap -e 'keycode 49 = Tab ISO_Left_Tab Tab ISO_Left_Tab'
-# Control_L = Tab
-xmodmap -e 'keycode 37= Tab ISO_Left_Tab Tab ISO_Left_Tab'
+# xmodmap -e 'keycode 49 = Tab ISO_Left_Tab Tab ISO_Left_Tab'
+
+# # Tab = Escape xmodmap -e 'keycode 23 = Escape NoSymbol Escape'
+# # Control_L = Tab
+# xmodmap -e 'keycode 37= Tab ISO_Left_Tab Tab ISO_Left_Tab'
