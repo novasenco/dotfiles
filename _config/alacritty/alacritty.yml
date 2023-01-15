@@ -1,21 +1,8 @@
 # https://github.com/alacritty/alacritty/blob/master/alacritty.yml
 #
 font:
-  size: 10.0
-
-  # DejaVu Sans Mono (default)
-  normal:
-    family: DejaVu Sans Mono
-    style: Book
-  bold:
-    family: DejaVu Sans Mono
-    style: Bold
-  italic:
-    family: DejaVu Sans Mono
-    style: Oblique
-  bold_italic:
-    family: DejaVu Sans Mono
-    style: Bold Oblique
+  size: 11.0
+  # size: 7.0
 
   # # Hack
   # normal:
@@ -74,10 +61,27 @@ font:
   # #   family: Terminus
   # #   style: Bold Italic
 
-# background_opacity: 0.7
+  # DejaVu Sans Mono (default)
+  normal:
+    family: DejaVu Sans Mono
+    style: Book
+  bold:
+    family: DejaVu Sans Mono
+    style: Bold
+  italic:
+    family: DejaVu Sans Mono
+    style: Oblique
+  bold_italic:
+    family: DejaVu Sans Mono
+    style: Bold Oblique
+
+# background_opacity: 0.75
+background_opacity: 0.92
+
+window:
+  dynamic_title: false
 
 colors:
-
   # nokto
   primary:
     background: '#000000'

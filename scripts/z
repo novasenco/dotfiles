@@ -1,0 +1,13 @@
+#!/bin/sh
+
+if [ ! -r /tmp/z.id ];
+then
+  {
+    tabbed -c zathura "$@" -e >/tmp/z.id;
+    rm -f /tmp/z.id;
+  } &
+else
+  read -r id </tmp/z.id;
+  zathura --fork "$@" -e "$id";
+fi;
+

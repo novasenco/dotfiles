@@ -3,29 +3,44 @@
 super + Return
     $TERMINAL
 
-# program launcher
-super + shift + d
-    dmenu_run -b -p "run: " -fn "Ubuntu 20" -l 20
-
-# better program launcher
-super + {d,w,shift + w}
-    rofi -show {drun,window,ssh}
+super + p
+    rofi -show drun
 
 # reload sxhkd
-# > If this is called too frequently, then bspwm locks up.
-# > Therefore, I have implemented a 4 second delay between
-# > sxhkdrc reloads
+#   If this is called too frequently, then bspwm locks up.
+#   Therefore, I have implemented a 4 second delay between
+#   sxhkdrc reloads
 super + Escape
-    time=0; curtime=$(date +%s); if [ -f /tmp/.sxhkd_time ]; then time=$(cat /tmp/.sxhkd_time); fi; if [[ $(($curtime - $time)) -gt 4 ]]; then pkill -USR1 -x sxhkd && notify-send 'reloaded sxhkdrc'; printf $curtime > /tmp/.sxhkd_time; fi
+    time=0; \
+    curtime=$(date +%s); \
+    if [ -f /tmp/.sxhkd_time ]; then \
+        time=$(cat /tmp/.sxhkd_time); \
+    fi; \
+    if [[ $(($curtime - $time)) -gt 4 ]]; then \
+        pkill -USR1 -x sxhkd && notify-send 'reloaded sxhkdrc'; \
+        printf $curtime > /tmp/.sxhkd_time; \
+    else \
+        notify-send "Wait $((4 - $curtime + $time)) seconds"; \
+    fi
 
 # restart bspwm
 # > ditto above
 super + shift + Escape
-	time=0; curtime=$(date +%s); if [ -f /tmp/.bspwm_time ]; then time=$(cat /tmp/.bspwm_time); fi; if [[ $(($curtime - $time)) -gt 4 ]]; then $HOME/.config/bspwm/bspwmrc && notify-send 'bspwm restarted' && printf $curtime > /tmp/.bspwm_time || notify-send 'bspwm failed to restart'; fi
+	time=0; \
+    curtime=$(date +%s); \
+    if [ -f /tmp/.bspwm_time ]; then \
+        time=$(cat /tmp/.bspwm_time); \
+    fi; \
+    if [[ $(($curtime - $time)) -gt 4 ]]; then \
+        $HOME/.config/bspwm/bspwmrc && notify-send 'bspwm restarted' && \
+        printf $curtime > /tmp/.bspwm_time || notify-send 'bspwm failed to restart'; \
+    else \
+        notify-send "Wait $((4 - $curtime + $time)) seconds"; \
+    fi
 
 # toggle bspwm (top) polybar
 super + shift + p
-    if [[ $(bspc config top_padding) -eq 0 ]]; then echo cmd:show > /tmp/ipc-polybar-bspwm; bspc config top_padding 38; else echo cmd:hide > /tmp/ipc-polybar-bspwm; bspc config top_padding 0; fi
+    if [[ $(bspc config top_padding) -eq 0 ]]; then echo cmd:show > /tmp/ipc-polybar-bspwm; bspc config top_padding 32; else echo cmd:hide > /tmp/ipc-polybar-bspwm; bspc config top_padding 0; fi
 
 # restart polybar
 super + alt + p
@@ -48,8 +63,8 @@ super + m
     bspc desktop -l next
 
 # if the current node is automatic, send it to the last manual, otherwise pull the last leaf
-# super + y
-#     bspc query -N -n focused.automatic && bspc node -n last.!automatic || bspc node last.leaf -n focused
+super + y
+    bspc query -N -n focused.automatic && bspc node -n last.!automatic || bspc node last.leaf -n focused
 
 # swap the current node and the biggest node
 super + {_,shift +}g
@@ -62,16 +77,6 @@ super + {_,shift +}g
 # set the window state
 super + {t,s,f}
     bspc node -t '~{tiled,floating,fullscreen}'
-
-# alternate between tiling and floating
-
-# pseudo tiling
-super + shift + t
-    eval $(xwininfo -id $(bspc query -N -n focused) | sed -n -e "s/^ \+Width: \+\([0-9]\+\).*/w=\1/p" -e "s/^ \+Height: \+\([0-9]\+\).*/h=\1/p"); bspc node -t '~pseudo_tiled'; xdo resize -w $(($w - 20)) -h $(($h - 20))
-
-# pseudo tile all windows
-super + ctrl + shift + t
-    while read -r n; do bspc node -f $n; eval $(xwininfo -id $n | sed -n -e "s/^ \+Width: \+\([0-9]\+\).*/w=\1/p" -e "s/^ \+Height: \+\([0-9]\+\).*/h=\1/p"); bspc node -t '~pseudo_tiled'; xdo resize -w $(($w - 20)) -h $(($h - 20)); done <<< "$(bspc query -N -n .tiled.window -d focused)"
 
 # set the node flags
 super + ctrl + {x,y,z}
@@ -86,7 +91,7 @@ super + {_,shift + }{h,j,k,l}
     bspc node -{f,s} {west,south,north,east}
 
 # focus the node for the given path jump
-super + {p,b,comma,period}
+super + {a,b,comma,period}
     bspc node -f @{parent,brother,first,second}
 
 # focus the next/previous node
@@ -102,6 +107,9 @@ super + equal
 
 super + shift + equal
     bspc node -B
+
+super + shift + bracket{left,right}
+    bg_switch {prev,next} dark
 
 # focus the next/previous desktop
 super + bracket{left,right}
@@ -147,80 +155,43 @@ super + ctrl + shift + space
 
 # expand the tiled space in the given direction
 super + alt + {h,j,k,l}
+    bspc node {@west -r -2,@south -r +2,@north -r -2,@east -r +2}
+
+super + ctrl + alt + {h,j,k,l}
     bspc node {@west -r -10,@south -r +10,@north -r -10,@east -r +10}
 
 # contract the tiled space in the given direction
 super + alt + shift + {h,j,k,l}
+    bspc node {@east -r -2,@north -r +2,@south -r -2,@west -r +2}
+
+super + ctrl + alt + shift + {h,j,k,l}
     bspc node {@east -r -10,@north -r +10,@south -r -10,@west -r +10}
 
 # move a floating window
 # super + {Left,Down,Up,Right}
 super + ctrl + {Left,Down,Up,Right}
-    xdo move {-x -20,-y +20,-y -20,-x +20}
+    xdo move {-x -2,-y +2,-y -2,-x +2}
 
 super + alt + {Right,Down}
-    xdo resize {-w +20,-h +20}
+    xdo resize {-w +2,-h +2}
 
 super + alt + {Left,Up}
-    {xdo move -x -20 & xdo resize -w +20,xdo move -y -20 & xdo resize -h +20}
+    {xdo move -x -2 & xdo resize -w +2,xdo move -y -2 & xdo resize -h +2}
 
 super + alt + shift + {Left,Up}
-    xdo resize {-w -20,-h -20}
+    xdo resize {-w -2,-h -2}
 
 super + alt + shift + {Right,Down}
-    {xdo move -x +20 && xdo resize -w -20,xdo move -y +20 && xdo resize -h -20}
+    {xdo move -x +2 && xdo resize -w -2,xdo move -y +2 && xdo resize -h -2}
 
-#
-# pointer focus/move/resize
-#
+alt + ctrl + {j,k,m}
+    vol -N{d,i,t,t}
 
-# start move/resize
-super + button{1-3}
-    bspc pointer -g {move,resize_side,resize_corner}
+alt + ctrl + {u,i,o,p}
+    light -{S 0,U 5,A 5,S 100}
 
-# end move/resize
-super + @button{1-3}
-    bspc pointer -u
-
-
-# # background change
-# super + {F1,F2}
-#     bg_switch -q {prev,next} dark
-
-# super + shift + {F1,F2}
-#     bg_switch -q {prev,next} light
-
-# super + ctrl + {F1,F2}
-#     bg_switch -q {prev,next} nature
-
-# (slow) screen brightness
-# shift + XF86MonBrightness{Down,Up}
-shift + F{4,5}
-    light {-U,-A} 1
-
-# screen brightness (larger adjustment)
-# XF86MonBrightness{Down,Up}
-F{4,5}
-    light {-U,-A} 5
-
-XF86AudioMute
-    pamixer -t
-
-F1{1,2}
-    pamixer -{d,i}5
-
-shift + F1{1,2}
-    pamixer -{d,i}1
-
-# music (playerctl)
-XF86Audio{Prev,Next}
-    mpc {prev,next}
-
-XF86AudioPlay
-    pgrep mpd && mpc toggle || mpd
-
-ctrl + XF86AudioPlay
-    pgrep mpd && pkill mpd || mpd
+alt + ctrl + r
+    pkill -USR1 -x redshift
 
 # {fullscreen, select, current window} screenshot
 {Print,shift + Print,ctrl + Print}
@@ -229,45 +200,10 @@ ctrl + XF86AudioPlay
 super + shift + BackSpace
     slock
 
-# scripts I use a lot
-super + alt + {x,i,shift + x}
-    ~/scripts/{mouse_kbd_setup.sh,clip_open.sh,swap_kmp.sh}
-
 super + shift + m
     ~/scripts/toggletouchpad_libinput.sh
 
-super + ctrl + alt + m
-    notify-send 'MPD:' "$(mpc current | sed -e "s/\//\n/" | sed -e "s/\.[a-z]*$//")"
-
-super + ctrl + c
-    ~/scripts/clip_color
-
-
-# music visualization
-super + alt + m
-    $TERMINAL -e sh -c 'vis'
-
-# # ncmpcpp
-super + ctrl + m
-    $TERMINAL -e sh -c 'ncmpcpp'
-
-super + e
-    $TERMINAL -e ranger
-
-super + ctrl + s
-    $TERMINAL -e sh -c 'tmux new -s school ranger --cmd "cd _current_semester" || tmux attach -dt school'
-
 super + alt + s
     pgrep screenkey && pkill screenkey || screenkey --ignore Caps_Lock
-
-# left click
-{ctrl + F1,shift + F1,alt + F1,F1}
-    xdotool click 1
-# middle click
-{ctrl + F2,shift + F2,alt + F2,F2}
-    xdotool click 2
-# right click
-{ctrl + F3,shift + F3,alt + F3,F3}
-    xdotool click 3
 
 # vim: ft=config et ts=4 sw=4 sts=4

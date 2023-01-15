@@ -1,63 +1,62 @@
-! font
-URxvt.font: xft:DejaVu Sans Mono:size=11, xft:Noto Color Emoji:size=11
 
-xterm*faceName: mono
-xterm*faceSize: 11
-xterm*eightBitInput:   false
-xterm*eightBitOutput:  true
-xterm*backarrowKey: false
-
-Emacs.font: dejavu sans mono-11
+Emacs.font: dejavu sans mono-12
 
 Xmessage*font: -misc-dejavu sans mono-medium-r-normal-*-17-120-100-100-m-*-*-*
 
-! settings
-URxvt.geometry:             80x28
-URxvt.depth:                32
-URxvt.borderless:           true
-URxvt.internalBorder:       0
-URxvt.scrollBar:            false
-URxvt.saveLines:            2000
-URxvt.cursorBlink:          false
-URxvt.scrollTtyOutput:      false
-URxvt.scrollWithBuffer:     true
-URxvt.scrollTtyKeypress:    true
-URxvt.buffered:             false
-URxvt.intensityStyles:      false
-URxvt.externalBorder:       0px
-! URxvt.letterSpace: -1
+Xft.dpi:       96
+Xft.antialias: 1
+Xft.autohint:  0
+Xft.hinting:   1
+Xft.hintstyle: hintsfull
+Xft.lcdfilter: lcdlight
+Xft.rgba:      rgb
 
-Xft.dpi:                        96
-Xft.antialias:                  1
-Xft.autohint:                   0
-Xft.hinting:                    1
-Xft.hintstyle:                  hintslight
-Xft.lcdfilter:                  lcdlight
-Xft.rgba:                       rgb
+Xcursor.theme: BMZ-cursor
+
+URxvt.font:              xft:DejaVu Sans Mono:size=12, xft:Noto Color Emoji:size=12
+! URxvt.font:              xft:Liberation Mono:size=12, xft:Noto Color Emoji:size=12
+URxvt.letterSpace:       -1
+URxvt.geometry:          80x28
+URxvt.depth:             24
+URxvt.borderless:        true
+URxvt.externalBorder:    0px
+URxvt.internalBorder:    4px
+! URxvt.internalBorder:    0px
+URxvt.scrollBar:         false
+URxvt.saveLines:         4000
+URxvt.cursorBlink:       false
+URxvt.scrollTtyOutput:   false
+URxvt.scrollWithBuffer:  true
+URxvt.scrollTtyKeypress: true
+URxvt.buffered:          true
+URxvt.intensityStyles:   false
+URxvt.fading:            0
+URxvt.iconFile:          /usr/share/icons/Papirus/64x64/apps/urxvt.svg
+URxvt.iconName:          urxvt
+URxvt.title:             URxvt
 
 ! fix ctrl-arrow (in, eg, vim :terminal)
-URxvt.keysym.Control-Up:     \033[1;5A
-URxvt.keysym.Control-Down:   \033[1;5B
-URxvt.keysym.Control-Left:   \033[1;5D
-URxvt.keysym.Control-Right:  \033[1;5C
+URxvt.keysym.C-Up:     \033[1;5A
+URxvt.keysym.C-Down:   \033[1;5B
+URxvt.keysym.C-Left:   \033[1;5D
+URxvt.keysym.C-Right:  \033[1;5C
 
-
-! disable the stupid ctrl+shift 'feature'
+! disable ctrl+shift 'feature'
 URxvt.iso14755:     false
 URxvt.iso14755_52:  false
 
 ! perl extensions
-URxvt.perl-ext-common:  default,matcher,clipboard,keyboard-select,url-select,font-size,fullscreen
+URxvt.perl-ext-common:  default,matcher,clipboard,keyboard-select,url-select,font-size
 
-! first click opens url
-URxvt.matcher.button:   1
+! right click opens url
+URxvt.matcher.button: 3
 
 ! copy paste
 URxvt.clipboard.autocopy:   true
 URxvt.clipboard.copycmd:    xsel -ib
 URxvt.clipboard.pastecmd:   xsel -ob
-URxvt.keysym.Shift-Control-V:   perl:clipboard:paste
-URxvt.keysym.Shift-Control-C:   perl:clipboard:copy
+URxvt.keysym.C-S-V:   perl:clipboard:paste
+URxvt.keysym.C-S-C:   perl:clipboard:copy
 
 ! kbd-based selection/search
 URxvt.keyboard-select.clipboard: true
@@ -68,36 +67,68 @@ URxvt.keysym.M-u:           perl:url-select:select_next
 URxvt.url-select.autocopy:  false
 URxvt.url-select.launcher:  xdg-open
 
-URxvt.keysym.M-K:   font-size:increase
-URxvt.keysym.M-J:   font-size:decrease
-URxvt.keysym.M-I:   font-size:reset
-URxvt.keysym.M-O:   font-size:show
+URxvt.keysym.C-M-Up:    font-size:increase
+URxvt.keysym.C-M-Down:  font-size:decrease
+URxvt.keysym.C-M-Left:  font-size:reset
+URxvt.keysym.C-M-Right: font-size:show
 
-URxvt.keysym.M-F: perl:fullscreen:switch
+! ! nokto
+! *.foreground: #d0d0d0
+! *.background: #000000
+! ! URxvt.background: [92]#1c1c1c
+! ! URxvt.background: #000000
+! *.cursorColor: #f0f0f0
+! *.cursorColor2: #000000
+! ! *.highlightColor: [75]#d787af
+! *.highlightColor: #d787af
+! *.highlightTextColor: #000000
+! *.selection: #d787af
+! *.color0:  #303030
+! *.color1:  #d7005f
+! *.color2:  #afd7af
+! *.color3:  #af8787
+! *.color4:  #87afd7
+! *.color5:  #af87af
+! *.color6:  #87afaf
+! *.color7:  #d0d0d0
+! *.color8:  #808080
+! *.color9:  #d787af
+! *.color10: #87af5f
+! *.color11: #d7af87
+! *.color12: #5f8787
+! *.color13: #af87d7
+! *.color14: #5faf87
+! *.color15: #e4e4e4
 
-! nokto
-*.foreground: #d0d0d0
-*.background: #000000
-URxvt.background: [80]#000000
-*.selection: #303030
-*.highlightColor: [90]#303030
-*.highlightTextColor: #e4e4e4
-*.color0:  #303030
-*.color1:  #d7005f
-*.color2:  #afd7af
-*.color3:  #af8787
-*.color4:  #87afd7
-*.color5:  #af87af
-*.color6:  #87afaf
-*.color7:  #d0d0d0
-*.color8:  #808080
+! vulpo
+*.foreground: #d7d7af
+*.background: #1c1c1c
+! URxvt.background: #1c1c1c
+URxvt.background: [86]#1c1c1c
+*.cursorColor: #c6c6c6
+*.cursorColor2: #000000
+*.pointerColor: #444444
+*.pointerColor2: #000000
+*.pointerShape: left_ptr
+*.highlightColor: #444444
+*.highlightTextColor: #87875f
+*.selection: #444444
+*.color0:  #444444
+*.color1:  #d75f5f
+*.color2:  #5f875f
+*.color3:  #d7875f
+*.color4:  #5f8787
+*.color5:  #875f5f
+*.color6:  #87875f
+*.color7:  #d7d7af
+*.color8:  #626262
 *.color9:  #d787af
-*.color10: #87af5f
+*.color10: #5faf5f
 *.color11: #d7af87
-*.color12: #5f8787
-*.color13: #af87d7
+*.color12: #87afaf
+*.color13: #af87af
 *.color14: #5faf87
-*.color15: #e4e4e4
+*.color15: #c6c6c6
 
 ! ! gruvbox
 ! *.foreground: #ebdbb2
@@ -124,8 +155,6 @@ URxvt.background: [80]#000000
 ! *.foreground:         #d8dee9
 ! *.background:         #2e3440
 ! *.cursorColor:        #d8dee9
-! *fading:              20
-! *fadeColor:           #4c566a
 ! *.selection:          #3b4252
 ! *.highlightColor:     #3b4252
 ! *.highlightTextColor: #e5e9f0

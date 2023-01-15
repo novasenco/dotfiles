@@ -9,26 +9,52 @@ elif [ -d /proc/acpi/battery/ ]; then
 fi;
 
 charge="$(printf "($current_charge/$total_charge)*100\n" | bc -l)";
-status="$(cat /sys/class/power_supply/*/status)";
+status="$(cat /sys/class/power_supply/*/status | head -n1)";
 
+# # nokto
+# if [ "$status" = "Charging" ]; then
+#     i='#[fg=colour139]⚡';
+# elif [ "$status" = "Discharging" ]; then
+# 	if [ "$(printf "$charge < 15\n" | bc -l)" -eq 1 ]; then
+# 		i='#[fg=colour175]▕ ▏'; #printf '#[fg=colour175]  ';
+# 	elif [ "$(printf "$charge < 40\n" | bc -l)" -eq 1 ]; then
+# 		i='#[fg=colour180]▕░▏'; #printf '#[fg=colour180]  ';
+# 	elif [ "$(printf "$charge < 60\n" | bc -l)" -eq 1 ]; then
+# 		i='#[fg=colour109]▕▒▏'; #printf '#[fg=colour109]  ';
+# 	elif [ "$(printf "$charge < 80\n" | bc -l)" -eq 1 ]; then
+# 		i='#[fg=colour151]▕▓▏'; #printf '#[fg=colour151]  ';
+# 	else
+# 		i='#[fg=colour110]▕▉▏'; #printf '#[fg=colour110]  ';
+# 	fi
+# elif [ "$status" = "Full" ]; then
+# 	i='#[fg=colour110]✓▕▉▏';
+#   charge='100%%'; #printf '#[fg=colour110]   100%%';
+# else
+#   i="$(printf '#[fg=colour175]?#[fg=colour139][%s]' "$status")";
+# fi;
+
+# vulpo
 if [ "$status" = "Charging" ]; then
-    printf '#[fg=magenta] ';
+    i='#[fg=colour66]⚡';
 elif [ "$status" = "Discharging" ]; then
 	if [ "$(printf "$charge < 15\n" | bc -l)" -eq 1 ]; then
-		printf '#[fg=red]  ';
+		i='#[fg=colour167]↓▕ ▏'; #printf '#[fg=colour175]  ';
 	elif [ "$(printf "$charge < 40\n" | bc -l)" -eq 1 ]; then
-		printf '#[fg=yellow]  ';
+		i='#[fg=colour95]↓▕░▏'; #printf '#[fg=colour180]  ';
 	elif [ "$(printf "$charge < 60\n" | bc -l)" -eq 1 ]; then
-		printf '#[fg=cyan]  ';
+		i='#[fg=colour180]↓▕▒▏'; #printf '#[fg=colour109]  ';
 	elif [ "$(printf "$charge < 80\n" | bc -l)" -eq 1 ]; then
-		printf '#[fg=green]  ';
+		i='#[fg=colour101]↓▕▓▏'; #printf '#[fg=colour151]  ';
 	else
-		printf '#[fg=blue]  ';
+		i='#[fg=colour65]↓▕▉▏'; #printf '#[fg=colour110]  ';
 	fi
 elif [ "$status" = "Full" ]; then
-	printf '#[fg=blue]   100%%';
-	exit 0;
+	i='#[fg=colour65]✓▕▉▏';
+  charge='100%%'; #printf '#[fg=colour110]   100%%';
 else
-    printf '#[fg=magenta]?[%s] ' "$status"
+  # i="$(printf '#[fg=colour175]?#[fg=colour139][%s]' "$status")";
+  i='#[fg=colour175]?';
 fi;
-printf '%0.2f%%' "$charge";
+
+echo "'$status'" "'$i'"
+printf '%s%0.2f%%' "$i" "$charge";

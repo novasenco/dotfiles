@@ -1,24 +1,21 @@
 [colors]
-; novum
-bg       = #303030
-black    = #262626
-red      = #ff5f5f
-green    = #00af5f
-yellow   = #ffff87
-blue     = #00afd7
-magenta  = #af87d7
-cyan     = #00afaf
-white    = #e4e4e4
-bblack   = #626262
-bred     = #ff5f5f
-bgreen   = #00af5f
-byellow  = #ffaf5f
-bblue    = #00afd7
+; nova
+bg       = #000000
+black    = #202020
+dark_grey = #303030
+red      = #d7005f
+green    = #afd7af
+yellow   = #d7af87
+blue     = #87afd7
+magenta  = #af87af
+cyan     = #87afaf
+white    = #d0d0d0
+grey     = #808080
+pink     = #d787af
+bgreen   = #87af5f
+orange   = #af8787
+dark_cyan= #5f8787
 bmagenta = #af87d7
-bcyan    = #00afaf
-bwhite   = #e4e4e4
-darkgreen= #00875f
-orange   = #ff875f
 
 [bar/general]
 monitor = ${env:MONITOR:HDMI-1}
@@ -28,55 +25,64 @@ offset-x = 3
 offset-y = 3
 margin = 3
 width = 100%:-6
-height = 33
+height = 28
 line-size = 3
+; radius = 10
 ; scroll
 enable-scroll = false
 wrapping-scroll = false
 reverse-scroll = true
 ; tray
 tray-position = right
-tray-background = #bb303030
+tray-background = ${colors.dark_grey}
 tray-detached = false
 tray-padding = 3
-padding-right = 3
+padding-right = 4
 ; fg/bg
 ;; background = ${colors.bg}
-background-0 = #444444
-background-1 = #404040
-background-2 = #3c3c3c
-background-3 = #383838
-background-4 = #343434
-background-5 = #303030
-background-6 = #2c2c2c
-background-7 = #282828
-background-8 = #242424
-background-9 = #202020
+background-0 = #2d2d2d
+background-1 = #282828
+background-2 = #232323
+background-3 = #1e1e1e
+background-4 = #191919
+background-5 = #141414
+background-6 = #0f0f0f
+background-7 = #0a0a0a
+background-8 = #050505
+background-9 = #000000
 foreground = ${colors.white}
 ; modules
-module-right =
 modules-center = date
-modules-right = pkg backlight pulseaudio network battery
-module-margin-left = 2
-module-margin-right = 2
+modules-right = temperature pkg backlight pulseaudio network battery
+module-margin = 2
 ; font
-font-0 = Ubuntu:pixelsize=14;1
-font-1 = Font Awesome 5 Free Solid:style=Regular:size=14;4
-font-2 = unifont:fontformat=truetype:size=10:antialias=false;0
-font-3 = DejaVu Sans Mono for Powerline:pixelsize=14;1
+font-0 = Ubuntu:pixelsize=12;1
+font-1 = Font Awesome 5 Free Solid:style=Regular:size=12;2
+font-2 = unifont:fontformat=truetype:size=10:antialias=false;1
+font-3 = DejaVu:pixelsize=12;1
 
 [bar/bspwm]
 inherit = bar/general
-wm-restack = bspwm xwindow
+wm-restack = bspwm
 override-redirect = false
 enable-ipc = true
 modules-left = bspwm
+
+[bar/i3]
+inherit = bar/general
+override-redirect = false
+wm-restack = i3
+enable-ipc = true
+modules-left = i3
+
+[bar/xmonad]
+inherit = bar/general
 
 [module/xwindow]
 type = internal/xwindow
 label = "%title:0:60:..%"
 format-foreground = ${colors.white}
-format-underline = ${colors.bblack}
+format-underline = ${colors.white}
 label-padding = 4
 
 
@@ -85,17 +91,17 @@ type = internal/xkeyboard
 blacklist-0 = num lock
 
 format-prefix = 
-format-prefix-foreground = ${colors.bblue}
-format-uprefix-nderline = ${colors.bblue}
+format-prefix-foreground = ${colors.dark_cyan}
+format-uprefix-nderline = ${colors.dark_cyan}
 
 label-layout = %layout%
-label-layout-foreground = ${colors.bblue}
-; label-layout-underline = ${colors.bblue}
+label-layout-foreground = ${colors.dark_cyan}
+label-layout-underline = ${colors.dark_cyan}
 
-label-indicator-padding = 2
+label-indicator-padding = 3
 label-indicator-margin = 1
 label-indicator-background = ${colors.cyan}
-; label-indicator-underline = ${colors.cyan}
+label-indicator-underline = ${colors.cyan}
 
 
 [module/bspwm]
@@ -103,13 +109,13 @@ type = internal/bspwm
 
 format = <label-state> <label-mode>
 
-; label-separator = ║
+; label-separator = |
 ; label-separator-padding = 0
-; label-separator-foreground = ${colors.darkgreen}
+; label-separator-foreground = ${colors.pink}
 
 ws-icon-0 = term;
-ws-icon-1 = code;
 ws-icon-2 = web;
+ws-icon-1 = code;
 ws-icon-3 = chat;
 ws-icon-4 = school;
 ws-icon-default = 
@@ -117,84 +123,87 @@ ws-icon-default = 
 pin-workspaces = true
 strip-wsnumbers = false
 index-sort = false
-enable-click = true
-fuzzy-match = false
+enable-click = false
+fuzzy-match = true
 
 label-focused = %index%
-label-focused-background = ${colors.darkgreen}
+label-focused-background = ${colors.pink}
 label-focused-foreground = ${colors.bg}
-; label-focused-underline = ${colors.green}
-label-focused-padding = 2
+label-focused-underline = ${colors.bg}
+label-focused-overline = ${colors.bg}
+label-focused-padding = 3
 
 label-occupied = %index%
-; label-occupied-underline = ${colors.black}
-label-occupied-padding = 2
+; label-occupied-underline = ${colors.pink}
+; label-occupied-overline = ${colors.pink}
+label-occupied-foreground = ${colors.pink}
+label-occupied-padding = 3
 
 label-urgent = %index%
 label-urgent-background = ${colors.red}
 label-urgent-foreground = ${colors.black}
-; label-urgent-underline = ${colors.black}
-label-urgent-padding = 2
+label-urgent-underline = ${colors.black}
+label-urgent-padding = 3
 
 label-empty = %index%
-label-empty-foreground = ${colors.bblack}
-label-empty-padding = 2
+label-empty-foreground = ${colors.grey}
+label-empty-padding = 3
 
 label-monocle = ""
 label-monocle-foreground = ${colors.green}
 label-monocle-background = ${colors.bg}
 ; label-monocle = 
 ; label-monocle-foreground = ${colors.green}
-; label-monocle-background = ${colors.bblack}
-label-monocle-padding = 2
+; label-monocle-background = ${colors.grey}
+label-monocle-padding = 3
 
 label-locked = ""
 label-locked-foreground = ${colors.red}
 label-locked-background = ${colors.bg}
 ; label-locked = 
 ; label-locked-foreground = ${colors.red}
-; label-locked-background = ${colors.bblack}
-label-locked-padding = 2
+; label-locked-background = ${colors.grey}
+label-locked-padding = 3
 
 label-sticky = ""
 label-sticky-foreground = ${colors.yellow}
 label-sticky-background = ${colors.bg}
 ; label-sticky = 
 ; label-sticky-foreground = ${colors.yellow}
-; label-sticky-background = ${colors.bblack}
-label-sticky-padding = 2
+; label-sticky-background = ${colors.grey}
+label-sticky-padding = 3
 
 label-private = ""
 label-private-foreground = ${colors.magenta}
 label-private-background = ${colors.bg}
 ; label-private = 
 ; label-private-foreground = ${colors.magenta}
-; label-private-background = ${colors.bblack}
-label-private-padding = 2
+; label-private-background = ${colors.grey}
+label-private-padding = 3
 
 label-pseudotiled = ""
 label-pseudotiled-foreground = ${colors.blue}
 label-pseudotiled-background = ${colors.bg}
 ; label-pseudotiled = 
 ; label-pseudotiled-foreground = ${colors.cyan}
-; label-pseudotiled-background = ${colors.bblack}
-label-pseudotiled-padding = 2
+; label-pseudotiled-background = ${colors.grey}
+label-pseudotiled-padding = 3
 
 label-floating = ""
 label-floating-foreground = ${colors.blue}
 label-floating-background = ${colors.bg}
 ; label-floating = 
 ; label-floating-foreground = ${colors.blue}
-; label-floating-background = ${colors.bblack}
-label-floating-padding = 2
+; label-floating-background = ${colors.grey}
+label-floating-padding = 3
 
 label-fullscreen = "full"
 label-fullscreen-foreground = ${colors.blue}
 label-fullscreen-background = ${colors.bg}
 ; label-fullscreen = 
 ; label-fullscreen-foreground = ${colors.blue}
-; label-fullscreen-background = ${colors.bblack}
-label-fullscreen-padding = 2
+; label-fullscreen-background = ${colors.grey}
+label-fullscreen-padding = 3
 
 
 [module/i3]
@@ -204,36 +213,66 @@ index-sort = true
 enable-click = false
 enable-scroll = false
 reverse-scroll = false
+; wm-restack = i3
+; override-redirect = true
 
+ws-icon-0 = 1;
+ws-icon-1 = 2;
+ws-icon-2 = 3;
+ws-icon-3 = 4;
+ws-icon-4 = 9;
+ws-icon-default = 
+
+format = <label-state> <label-mode>
+
+label-mode = %mode%
+label-mode-padding = 3
+label-mode-background = ${colors.blue}
+
+label-focused = %index%
+label-focused-foreground = ${colors.bg}
+label-focused-background = ${colors.blue}
+label-focused-underline = ${colors.black}
+label-focused-padding = 4
+
+label-unfocused = %index%
+label-unfocused-padding = 4
+
+label-visible = %index%
+label-visible-underline = #555555
+label-visible-padding = 4
+
+label-urgent = %index%
+label-urgent-foreground = #000000
+label-urgent-background = #bd2c40
+label-urgent-padding = 4
+
+label-separator = |
+label-separator-padding = 0
+label-separator-foreground = ${colors.pink}
 
 [module/backlight]
 type = internal/backlight
-card = intel_backlight
+card = amdgpu_bl0
 
-format = <ramp> <label>
+format = <ramp><label>
 label-foreground = ${colors.white}
-; label-underline = ${colors.white}
+label-background = ${colors.dark_grey}
 label = %percentage%%
+label-padding = 3
 
 ramp-0 = 🌕
 ramp-1 = 🌔
 ramp-2 = 🌓
 ramp-3 = 🌒
 ramp-4 = 🌑
+ramp-padding = 3
+ramp-background = ${colors.white}
+ramp-foreground = ${colors.bg}
+ramp-underline = ${colors.white}
 
-bar-width = 10
-bar-indicator = |
-bar-indicator-foreground = ${colors.white}
-; bar-indicator-underline = ${colors.white}
-bar-indicator-font = 2
-bar-fill = ─
-bar-fill-font = 2
-bar-fill-foreground = ${colors.white}
-; bar-fill-underline = ${colors.white}
-bar-empty = ─
-bar-empty-font = 2
-bar-empty-foreground = ${colors.bblack}
-; bar-empty-underline = ${colors.bblack}
+[module/xmonad]
+
 
 
 [module/filesystem]
@@ -241,7 +280,7 @@ type = internal/fs
 interval = 30
 mount-0 = /
 label-mounted-foreground = ${colors.blue}
-; label-mounted-underline = ${colors.blue}
+label-mounted-underline = ${colors.blue}
 label-mounted = %mountpoint% %percentage_used%%
 label-unmounted-foreground = ${colors.red}
 label-unmounted = %mountpoint% not mounted
@@ -252,7 +291,7 @@ type = internal/cpu
 interval = 10
 format-prefix = " "
 format-prefix-foreground = ${colors.blue}
-; format-underline = ${colors.blue}
+format-underline = ${colors.blue}
 label-foreground = ${colors.blue}
 label = %percentage%%
 
@@ -262,7 +301,7 @@ type = internal/memory
 interval = 10
 format-prefix = " "
 format-prefix-foreground = ${colors.blue}
-; format-underline = ${colors.blue}
+format-underline = ${colors.blue}
 label-foreground = ${colors.blue}
 label = %percentage_used%%
 label-width = 3
@@ -270,17 +309,17 @@ label-width = 3
 
 [module/temperature]
 type = internal/temperature
-thermal-zone = 2
+thermal-zone = 0
 interval = 10
 warn-temperature = 65
 
 format = <ramp> <label>
 format-warn = <ramp> <label-warn>
-; format-underline = ${colors.blue}
-; format-warn-underline = ${colors.bred}
+format-underline = ${colors.blue}
+format-warn-underline = ${colors.pink}
 
 label-foreground = ${colors.blue}
-label-warn-foreground = ${colors.bred}
+label-warn-foreground = ${colors.pink}
 
 label = %temperature-c%
 label-warn = %temperature-c%
@@ -292,20 +331,26 @@ ramp-foreground = ${colors.blue}
 
 [module/network]
 type = internal/network
-interface = wlp2s0
+interface = wlp4s0
 interval = 4
 ; connected
 format-connected = <label-connected>
 format-connected-foreground = ${colors.green}
 format-connected-prefix = 
-format-connected-prefix-padding-right = 1
-label-connected = %essid:0:10:..% %signal%% %downspeed:0:6:..%
+format-connected-prefix-background = ${colors.green}
+format-connected-prefix-foreground = ${colors.bg}
+format-connected-prefix-padding = 2
+; label-connected = %essid:0:5:..% %signal%% %downspeed:0:6:..%
+label-connected = %essid:0:5:..% %downspeed:0:6:..%
+label-connected-padding = 2
+label-connected-background = ${colors.dark_grey}
 label-connected-foreground = ${colors.green}
 ; disconnected
 format-disconnected = <label-disconnected>
 label-disconnected =  %ifname%
 label-disconnected-foreground = ${colors.black}
 label-disconnected-background = ${colors.red}
+label-disconnected-padding = 2
 ; ramp
 ;; ramp-signal-0  = 0
 ;; ramp-signal-1  = 1
@@ -324,13 +369,12 @@ label-disconnected-background = ${colors.red}
 type = internal/date
 
 interval = 10
-format-prefix = 
-; format-background = ${colors.bblack}
-format-foreground = ${colors.white}
-; format-underline = ${colors.cyan}
-format-prefix-padding-left = 1
-format-prefix-padding-right = 1
-date = %d/%m  %H:%M
+; format-prefix = 
+format-foreground = ${colors.blue}
+; format-background = ${colors.white}
+; format-foreground = ${colors.bg}
+format-padding = 3
+date = %d %b  %H:%M
 date-alt = %a, %d %b %Y, %H:%M %Z
 
 
@@ -339,7 +383,7 @@ type = internal/pulseaudio
 
 ; Sink to be used, if it exists (find using `pacmd list-sinks`, name field)
 ; If not, uses default sink
-sink = alsa_output.pci-0000_00_1b.0.analog-stereo
+sink = alsa_output.pci-0000_05_00.6.analog-stereo
 
 ; Use PA_VOLUME_UI_MAX (~153%) if true, or PA_VOLUME_NORM (100%) if false
 ; Default: true
@@ -349,16 +393,35 @@ use-ui-max = true
 ; Default: 5
 interval = 5
 
-format-volume = <label-volume>
-label-volume =  %percentage%%
+format-volume = <ramp-volume><label-volume>
 
-label-volume-foreground = ${colors.cyan}
-; label-volume-underline = ${colors.cyan}
+label-volume-foreground = ${colors.blue}
+label-volume-background = ${colors.dark_grey}
+label-volume-padding = 3
 
-label-muted = %percentage%%
-label-muted-background = ${colors.bcyan}
+label-muted =   mute
+label-muted-padding = 3
+label-muted-background = ${colors.blue}
 label-muted-foreground = ${colors.black}
-; label-muted-underline = ${colors.bcyan}
+
+; Only applies if <ramp-volume> is used
+ramp-volume-0 = ︁
+ramp-volume-1 = 
+ramp-volume-2 = 
+ramp-volume-padding = 3
+ramp-volume-background = ${colors.blue}
+ramp-volume-foreground = ${colors.bg}
+
+; format-volume = <label-volume>
+; label-volume =  %percentage%%
+
+; ; label-volume-foreground = ${colors.blue}
+; ; label-volume-underline = ${colors.blue}
+
+; label-muted = %percentage%%
+; label-muted-background = ${colors.black}
+; label-muted-foreground = ${colors.pink}
+; label-muted-underline = ${colors.pink}
 
 
 [module/alsa]
@@ -366,13 +429,13 @@ type = internal/alsa
 
 format-volume = <label-volume>
 label-volume =  %percentage%%
-label-volume-foreground = ${colors.cyan}
-; label-volume-underline = ${colors.cyan}
+label-volume-foreground = ${colors.blue}
+label-volume-underline = ${colors.blue}
 
 label-muted = %percentage%%
-label-muted-background = ${colors.cyan}
-label-muted-foreground = ${colors.black}
-; label-muted-underline = ${colors.black}
+label-muted-background = ${colors.black}
+label-muted-foreground = ${colors.cyan}
+label-muted-underline = ${colors.pink}
 
 bar-volume-width = 10
 bar-volume-foreground-0 = ${colors.cyan}
@@ -385,54 +448,71 @@ bar-volume-foreground-6 = ${colors.red}
 ; bar-volume-gradient = true
 ; bar-volume-indicator = |
 ; bar-volume-indicator-foreground = ${colors.cyan}
-; bar-volume-indicator-underline = ${colors.cyan}
+bar-volume-indicator-underline = ${colors.cyan}
 ; bar-volume-indicator-font = 1
 ; bar-volume-fill = ─
 ; bar-volume-fill-font = 1
 ; bar-volume-fill-foreground = ${colors.cyan}
-; bar-volume-fill-underline = ${colors.cyan}
+bar-volume-fill-underline = ${colors.cyan}
 ; bar-volume-empty = ─
 ; bar-volume-empty-font = 1
 ; bar-volume-empty-foreground = ${colors.black}
-; bar-volume-empty-underline = ${colors.black}
+bar-volume-empty-underline = ${colors.black}
 
 [module/battery]
 type = internal/battery
 battery = BAT0
-adapter = ADP0
-full-at = 99
+adapter = AC0
+full-at = 97
 interval = 10
 
-format-charging = <animation-charging> <label-charging>
-label-charging-foreground = ${colors.blue}
-; format-charging-underline = ${colors.blue}
+label-full-foreground = ${colors.cyan}
+label-full-background = ${colors.dark_grey}
+label-full-padding = 2
 
-format-discharging = <ramp-capacity> <label-discharging>
-label-discharging-foreground = ${colors.white}
-; format-discharging-underline = ${colors.white}
-
-format-full-prefix =  
-format-full-prefix-foreground = ${colors.blue}
+format-full-prefix = 
+format-full-prefix-background = ${colors.cyan}
+format-full-prefix-foreground = ${colors.bg}
+format-full-prefix-padding = 2
 
 ramp-capacity-0 = 
 ramp-capacity-1 = 
 ramp-capacity-2 = 
 ramp-capacity-3 = 
 ramp-capacity-4 = 
-ramp-capacity-0-foreground = ${colors.red}
-ramp-capacity-1-foreground = ${colors.yellow}
-ramp-capacity-2-foreground = ${colors.cyan}
-ramp-capacity-3-foreground = ${colors.green}
-ramp-capacity-4-foreground = ${colors.bcyan}
-ramp-capacity-foreground = ${colors.white}
+ramp-capacity-background = ${colors.red}
+ramp-capacity-foreground = ${colors.bg}
+; ramp-capacity-padding = 2
+
+format-discharging = <animation-discharging><label-discharging>
+label-discharging-foreground = ${colors.pink}
+label-discharging-background = ${colors.dark_grey}
+label-discharging-padding = 3
+
+animation-discharging-0 = 
+animation-discharging-1 = 
+animation-discharging-2 = 
+animation-discharging-3 = 
+animation-discharging-4 = 
+animation-discharging-background = ${colors.pink}
+animation-discharging-foreground = ${colors.bg}
+animation-discharging-padding = 2
+animation-discharging-framerate = 500
+
+format-charging = <animation-charging><label-charging>
+label-charging-foreground = ${colors.blue}
+label-charging-background = ${colors.dark_grey}
+label-charging-padding = 3
 
 animation-charging-0 = 
 animation-charging-1 = 
 animation-charging-2 = 
 animation-charging-3 = 
 animation-charging-4 = 
-animation-charging-foreground = ${colors.blue}
-animation-charging-framerate = 4000
+animation-charging-background = ${colors.blue}
+animation-charging-foreground = ${colors.bg}
+animation-charging-padding = 2
+animation-charging-framerate = 500
 
 
 [settings]
@@ -443,8 +523,9 @@ screenchange-reload = false
 type = custom/script
 interval = 300
 format = <label>
-format-foreground = ${colors.red}
-; format-underline = ${colors.red}
+format-background= ${colors.pink}
+format-foreground = ${colors.bg}
+format-padding = 3
 label = %output%
 exec = $HOME/.config/polybar/pkg.sh
 exec-if = ping -qw2 -c1 archlinux.org > /dev/null
@@ -453,7 +534,7 @@ click-right = sh -c 'notify-send "checking for updates" ""; $HOME/.config/polyba
 
 
 [global/wm]
-; margin-top = 36
+margin-top = 36
 ; margin-bottom = 0
 
 ; vim:ft=dosini

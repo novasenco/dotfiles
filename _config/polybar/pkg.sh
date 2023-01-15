@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
-checkupdates 2>/dev/null >/tmp/pkgs
+checkupdates 2>/dev/null | sed 's/ .*//' >/tmp/pkgs
 pac="$(wc -l < /tmp/pkgs)"
 
-# add patterns to ~/.cowerignore to ignore files below
-cower -u 2>/dev/null | grep -Ev $(cat $HOME/.cowerignore 2>/dev/null || printf '_') | sed '/^$/d' >/tmp/cowerpkgs
-aur=$(wc -l < /tmp/cowerpkgs)
+paru -Qqua >/tmp/aurpkgs
+aur=$(wc -l < /tmp/aurpkgs)
 
 [[ $(($pac + $aur)) -gt 0 ]] && printf " "
 [[ $pac -gt 0 ]] && printf "${pac}"

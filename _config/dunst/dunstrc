@@ -151,9 +151,9 @@ browser = firefox
 icon_position = left
 
 # Paths to default icons.
-# icon_path = /usr/share/icons/Adwaita/16x16/status/:/usr/share/icons/Adwaita/16x16/devices/:/usr/share/icons/Adwaita/24x24/emotes/
-icon_path = /usr/share/icons/Flat-Remix-Green-Dark/actions/scalable/:/usr/share/icons/Flat-Remix-Green-Dark/status/:/usr/share/icons/Flat-Remix-Green-Dark/actions/devices/scalable/
-# icon_path = /usr/share/icons/Arc/actions/symbolic/:/usr/share/icons/Arc/status/symbolic/:/usr/share/icons/Arc/panel/22/
+# icon_path = /usr/share/icons/Adwaita/16x16/legacy/:/usr/share/icons/Adwaita/16x16/devices/:/usr/share/icons/Adwaita/24x24/emotes/
+# icon_path = /usr/share/icons/Flat-Remix-Green-Dark/actions/scalable/:/usr/share/icons/Flat-Remix-Green-Dark/status/:/usr/share/icons/Flat-Remix-Green-Dark/actions/devices/scalable/
+icon_path = /usr/share/icons/Arc/actions/symbolic/:/usr/share/icons/Arc/status/symbolic/:/usr/share/icons/Arc/panel/22/
 
 [shortcuts]
 

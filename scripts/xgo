@@ -1,0 +1,112 @@
+#!/usr/bin/dash
+#
+# __  ____ _  ___
+# \ \/ / _` |/ _ \   Simple script to start
+#  }  { (_| | (_) |  Xorg server. This is
+# /_/\_\__, |\___/   heavily modeled after
+#      |___/         startx.
+#
+# Author: Nova Senco
+# Last Change: 18 April 2022
+
+version="1.0";
+
+unset SESSION_MANAGER;
+
+defaultdisplay="4";
+defaultclient="dwm";
+defaultlogfile="$HOME/.xorg.log";
+defaultclientargs="";
+defaultserver="/usr/bin/X";
+defaultserverargs="";
+
+argv="$(getopt -n xgo \
+  -l 'help,version,display:,logfile:,' \
+  -o 'hv:d:l' '--' "$@" )";
+
+if [ "$?" -ne 0 ];
+then
+  printhelp;
+  exit 1;
+fi;
+
+eval set -- "$argv";
+
+display="";
+logfile="";
+
+clientargs="";
+serverargs="";
+vtarg="";
+usexauth=1;
+clientlog="";
+storeclientarg=0;
+
+while true;
+do
+  if [ "$storeclientarg" = 1 ];
+  then
+    if [ "$1" = "-/" ];
+    then
+      storeclientarg=0;
+    else
+      if [ "x$clientargs" = "x" ];
+      then
+        clientargs="$1";
+      else
+        clientargs="$clientargs $1";
+      fi;
+    fi;
+  else
+    case "$1" in
+
+      -h|--help)
+        printhelp;
+        exit 0;
+        ;;
+
+      -v|--version)
+        echo "$(printf "$0" | rev | cut -f1 -d/ | rev) $version";
+        exit;
+        ;;
+
+      -d|--display)
+        display="$2";
+        shift 2;
+        ;;
+
+      -l|--logfile)
+        logfile="$2";
+        shift 2;
+        ;;
+
+      -/)
+        storeclientarg=1;
+        shift;
+        ;;
+
+      --)
+        shift;
+        break;
+        ;;
+
+    esac;
+  fi;
+
+done;
+
+if [ "x$display" = x ];
+then
+  display="$defaultdisplay";
+fi;
+
+if [ "x$server" = x ];
+then
+  server="$defaultserver";
+fi;
+
+xinit "awesome" "$@" -- "$server" ":$display";
+
+ret="$?";
+deallocut >/dev/null 2>&1;
+exit "$ret";

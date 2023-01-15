@@ -1,18 +1,258 @@
-configuration {
-  modi: "drun,window,ssh";
-  width: 60;
-  lines: 6;
-  columns: 2;
-  font: "Ubuntu Bold 14";
-  bw: 4;
-  padding: 40;
-  yoffset: -300;
-  xoffset: 0;
-  show-icons: true;
-  eh: 1;
-  fullscreen: false;
-  color-normal: "#000000, #87afd7, #000000, #303030, #d787af";
-  color-urgent: "#bf616a, #3b4252, #bf616a, #3b4252, #bf616a";
-  color-active: "#8fbcbb, #3b4252, #000000, #3b4252, #8fbcbb";
-  color-window: "#000000, #808080, #3b4252";
+* {
+    foreground:                  #d7d7af;
+    background:                  #1c1c1c;
+    lightbg:                     #444444;
+    background-color:            #000000;
+    border-color:                #5f8787;
+
+    alternate-normal-foreground: @foreground;
+    alternate-active-foreground: @foreground;
+    alternate-urgent-foreground: @foreground;
+    selected-normal-foreground:  @foreground;
+    selected-active-foreground:  @foreground;
+    selected-urgent-foreground:  @foreground;
+
+    alternate-normal-background: @background;
+    alternate-active-background: @background;
+    alternate-urgent-background: @background;
+    selected-normal-background:  @background;
+    selected-active-background:  @background;
+    selected-urgent-background:  @background;
+
+    bordercolor:                 @lightbg;
+    separatorcolor:              @lightbg;
 }
+window {
+    /* border-color:     rgba ( 215, 135, 175, 75 % ); */
+    border-color:     @border-color;
+    background-color: @background-color;
+    border:           3px;
+    padding:          0px;
+    border-radius:    10px;
+    padding:          0.5em;
+    spacing:          0px;
+
+    anchor:         north;
+    location:       center;
+    y-offset:       -15.5em;
+
+
+    children: [ inputbar, message, wrapper-mode-switcher, listview , pagerbox ];
+}
+
+
+element {
+  background: transparent;
+  children: [ element-icon, element-text ];
+}
+element,element-text,element-icon, button {
+    cursor: pointer;
+}
+pagerbox {
+    expand: false;
+    orientation: horizontal;
+    children: [ icon-left, pad, icon-right ];
+}
+
+pad {
+  expand: true;
+}
+icon-left {
+    expand: false;
+    filename: "go-previous";
+    size: 24;
+    vertical-align: 0.5;
+    action: "kb-page-prev";
+}
+
+icon-right {
+    expand: false;
+    filename: "go-next";
+    size: 24;
+    vertical-align: 0.5;
+    action: "kb-page-next";
+}
+
+wrapper-mode-switcher {
+    orientation: horizontal;
+    expand:     false;
+    spacing:    0;
+    children: [ icon-ms-ic1, mode-switcher, icon-ms-ic2 ];
+}
+icon-ms-ic1 {
+    filename: "go-previous";
+}
+icon-ms-ic2 {
+    filename: "go-next";
+}
+icon-ms-ic1,icon-ms-ic2 {
+    size: 16;
+    vertical-align: 0.8;
+    expand:        false;
+    border:       0px 0px 3px ;
+    border-color: @separatorcolor;
+}
+
+mode-switcher {
+    border:  0px;
+    spacing: 0px;
+    expand: true;
+}
+
+button {
+    padding:      3px;
+    border:       0px 0px 3px ;
+    border-color: @separatorcolor;
+}
+button selected.normal {
+    text-color: white;
+    background-color: @background;
+    border:       3px 3px 0px ;
+    border-color: @separatorcolor;
+    border-radius:    10px 10px 0 0;
+}
+
+
+sidebar {
+    expand: false;
+}
+
+message {
+    text-color:       black;
+    background-color: @background-color;
+    border-color:     grey;
+    border:           2px;
+    border-radius:    5px;
+    padding:          4px;
+    margin:           0px 0px 0.5em;
+    expand:           false;
+}
+
+listview {
+    spacing:      2px ;
+    scrollbar:    false;
+    padding:      0.5em;
+    background-color: @background;
+    expand:       true;
+    border:       0px 2px 2px ;
+    border-color: @separatorcolor;
+    border-radius: 0px 0px 10px 10px;
+}
+element {
+    border:  1;
+    border-color: transparent;
+    padding: 4px;
+}
+element-text {
+    background-color: inherit;
+    text-color:       inherit;
+}
+element.normal.normal {
+    background-color: @background;
+    text-color:       @foreground;
+}
+element.normal.urgent {
+    background-color: @background;
+    text-color:       @foreground;
+}
+element.normal.active {
+    background-color: @background;
+    text-color:       @foreground;
+}
+element.selected.normal {
+    border:  1;
+    border-color: @border-color;
+    background-color: @background;
+    text-color:       @foreground;
+}
+element.selected.urgent {
+    border:  1;
+    border-color: @border-color;
+    background-color: @background;
+    text-color:       @foreground;
+}
+element.selected.active {
+    border:  1;
+    border-color: @border-color;
+    background-color: @background;
+    text-color:       @foreground;
+}
+element.alternate.normal {
+    background-color: @background;
+    text-color:       @foreground;
+}
+element.alternate.urgent {
+    background-color: @background;
+    text-color:       @foreground;
+}
+element.alternate.active {
+    background-color: @background;
+    text-color:       @foreground;
+}
+scrollbar {
+    width:        4px ;
+    border:       0;
+    handle-width: 8px ;
+    padding:      0;
+}
+sidebar {
+    border:       2px 0px 0px ;
+    border-color: @separatorcolor;
+}
+inputbar {
+    text-color: white;
+    padding: 0px 0px 0.5em;
+}
+case-indicator {
+    text-color: white;
+}
+
+wrapper {
+    orientation: horizontal;
+    text-color:       black;
+    background-color: transparent;
+    border-color:     grey;
+
+    border: 2px;
+    border-radius: 5px;
+    padding: 4px;
+    children:   [ icon-k, entry, icon-paste];
+    spacing:  0.5em;
+}
+button-paste {
+    expand: false;
+    str: "gtk-paste";
+    size: 24;
+    vertical-align: 0.5;
+    action: "kb-cancel";
+}
+icon-paste {
+    expand: false;
+    filename: "gtk-paste";
+    size: 24;
+    vertical-align: 0.5;
+    action: "kb-primary-paste";
+}
+icon-k {
+    expand: false;
+    filename: "input-keyboard";
+    size: 24;
+    vertical-align: 0.5;
+
+}
+entry {
+    vertical-align: 0.5;
+}
+inputbar {
+    children:   [ wrapper ];
+}
+
+error-message {
+    background-color: darkred/10%;
+    border-color: darkred;
+    border-radius: 10px;
+    border: 2px;
+    padding: 0.5em;
+
+}
+

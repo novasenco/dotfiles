@@ -1,6 +1,7 @@
 [user]
-  name = novasenco
-  email = novasenco@protonmail.ch
+  name = Violet
+  email = violetjewel1729@gmail.com
+	signingkey = FEC25F8EFB936B18
 [alias]
   l = pull
   a = add
@@ -14,7 +15,7 @@
 [credential]
   helper = cache
 [commit]
-  gpgsign = false
+  gpgsign = true
 [gpg]
   program = gpg
 [pull]

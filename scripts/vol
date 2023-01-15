@@ -6,7 +6,7 @@
 #   \_/ \___/|_|  a keybinding
 #
 # Author: Nova Senco
-# Last Change: 20 August 2021
+# Last Change: 06 August 2022
 
 version='1.3';
 
@@ -52,6 +52,7 @@ argv="$(getopt -n vol \
 
 if [ "$?" -ne 0 ];
 then
+  printhelp;
   exit 1;
 fi;
 
@@ -286,7 +287,7 @@ fi;
 if [ "$notify" -eq 1 ] && [ "$nonotify" -ne 1 ];
 then
   # pgrep -x dunst >/dev/null && \
-  notify-send "${mutestr:-vol}" \
+  notify-send "${mutestr:-vol} $vol" \
     -i "$icon_name" \
     -h "int:value:$vol" \
     -h 'string:synchronous:volume';

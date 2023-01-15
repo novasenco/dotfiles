@@ -5,16 +5,17 @@ set render-loading false
 set selection-clipboard clipboard
 set guioptions ""
 set window-title-basename false
-set incremental-search true
-set search-hadjust true
-set highlight-transparency 0.35
 set page-padding 20
 set first-page-column 1:1
 set scroll-full-overlap 0.2
 set zoom-center true
 set vertical-center true
 set zoom-step 4
+set window-title-basename true
+# set window-icon "/usr/share/icons/Arc/mimetypes/16/application-pdf.png"
 
+set search-hadjust false
+set highlight-transparency 0.45
 set abort-clear-search false
 set incremental-search false
 
@@ -22,19 +23,19 @@ set incremental-search false
 # \ '#444444', '#d75f5f', '#5f875f', '#d7875f', '#5f8787', '#875f5f', '#87875f', '#d7d7af',
 # \ '#626262', '#ff5f5f', '#87af5f', '#d7af87', '#87afaf', '#af87d7', '#5faf87', '#c6c6c6', ]
 
-# vulpo
-set default-bg                  "#121212"
-set default-fg                  "#d7d7af"
+# nokto
+set default-bg                  "#222222"
+set default-fg                  "#d0d0d0"
 set statusbar-bg                "#444444"
-set statusbar-fg                "#c6c6c6"
+set statusbar-fg                "#d0d0d0"
 set inputbar-bg                 "#444444"
-set inputbar-fg                 "#c6c6c6"
+set inputbar-fg                 "#d0d0d0"
 set notification-bg             "#444444"
-set notification-fg             "#c6c6c6"
+set notification-fg             "#d0d0d0"
 set notification-error-bg       "#444444"
-set notification-error-fg       "#d75f5f"
+set notification-error-fg       "#d787af"
 set notification-warning-bg     "#444444"
-set notification-warning-fg     "#d7af87"
+set notification-warning-fg     "#af8787"
 set highlight-color             "#87afaf"
 set highlight-active-color      "#d7af87"
 set completion-bg               "#444444"
@@ -45,8 +46,8 @@ set index-bg                    "#444444"
 set index-fg                    "#c6c6c6"
 set index-active-bg             "#5f875f"
 set index-active-fg             "#121212"
-set recolor-lightcolor          "#1c1c1c"
-set recolor-darkcolor           "#d7d7af"
+set recolor-lightcolor          "#040404"
+set recolor-darkcolor           "#d0d0d0"
 
 # # nouvm
 # set default-bg                  "#3a3a3a"

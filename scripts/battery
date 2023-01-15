@@ -8,20 +8,18 @@ elif [ -d /proc/acpi/battery/ ]; then
   total_charge=$(cat /proc/acpi/battery/*/info | grep 'last full capacity' | awk '{print $4}');
 fi;
 
+i='?';
 STATUS="$(cat /sys/class/power_supply/*/status)";
 if [ "$STATUS" = "Charging" ];
 then
-  printf "↑ ";
+  i='↑ ';
 elif [ "$STATUS" = "Discharging" ];
 then
-  printf "↓ ";
+  i='↓ ';
 elif [ "$STATUS" = "Full" ];
 then
-  printf "full";
-  exit 0;
-else
-  printf "? ";
+  i='full';
 fi;
 
-printf "%0.2f%%\n" "$(echo "(($current_charge/$total_charge)*100)" | bc -l)";
+printf "%s %0.2f%%\n" "$i" "$(echo "(($current_charge/$total_charge)*100)" | bc -l)";
 

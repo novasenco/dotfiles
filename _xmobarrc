@@ -11,11 +11,11 @@ Config {
    , alignSep = "}{"  -- separator between left-right alignment
    , template =  " %StdinReader%\
                  \ }{\
-                 \ <fc=#87afaf,#303030> KBD </fc> %kbd%\
+                 -- \ <fc=#87afaf,#303030> KBD </fc> %kbd%\
                  -- \ <fc=#87afaf,#303030> CPU </fc> %multicpu%\
                  -- \ <fc=#87afaf,#303030> MEM </fc> %memory%\
                  \ <fc=#87afaf,#303030> NET </fc> %dynnetwork%\
-                 \ <fc=#87afaf,#303030> WTHR </fc> %KTLH%\
+                 -- \ <fc=#87afaf,#303030> WTHR </fc> %KTLH%\
                  -- \ <fc=#87afaf,#303030> VOL </fc> %alsa:default:Master%\
                  \ <fc=#87afaf,#303030> BAT </fc> %battery%\
                  \ <fc=#87afaf,#303030> DATE </fc> %date%"

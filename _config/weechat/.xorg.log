@@ -1,0 +1,55 @@
+
+
+X.Org X Server 1.21.1.3
+X Protocol Version 11, Revision 0
+Current Operating System: Linux arch 5.16.12-arch1-1 #1 SMP PREEMPT Wed, 02 Mar 2022 12:22:51 +0000 x86_64
+Kernel command line: BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=b3fbd7e0-e6b7-4ffe-a536-f52c078aed67 rw loglevel=3 quiet acpi_osi=Linux acpi_backlight=vendor
+ 
+Current version of pixman: 0.40.0
+	Before reporting problems, check http://wiki.x.org
+	to make sure that you have the latest version.
+Markers: (--) probed, (**) from config file, (==) default setting,
+	(++) from command line, (!!) notice, (II) informational,
+	(WW) warning, (EE) error, (NI) not implemented, (??) unknown.
+(==) Log file: "/var/log/Xorg.0.log", Time: Mon Mar  7 10:25:04 2022
+(==) Using config file: "/etc/xorg.conf"
+(==) Using config directory: "/etc/X11/xorg.conf.d"
+(==) Using system config directory "/usr/share/X11/xorg.conf.d"
+The XKEYBOARD keymap compiler (xkbcomp) reports:
+> Warning:          Could not resolve keysym XF86EmojiPicker
+Errors from xkbcomp are not fatal to the X server
+[ 03/07/2022 10:25:06.252 parse_config_libconfig WARN ] The refresh-rate option has been deprecated. Please remove it from your configuration file. If you encounter any problems without this feature, please feel free to open a bug report
+Waiting for initial location to become available...
+Location: 30.44 N, 84.28 W
+The XKEYBOARD keymap compiler (xkbcomp) reports:
+> Warning:          Could not resolve keysym XF86EmojiPicker
+Errors from xkbcomp are not fatal to the X server
+2022-03-07 10:25:06 W: awesome: a_glib_poll:477: Last main loop iteration took 0.123212 seconds! Increasing limit for this warning to that value.
+2022-03-07 10:25:06 W: awesome: spawn_child_exited:388: Unknown child 1936 exited with status 0
+(EE) event19 - AT Translated Set 2 keyboard: client bug: event processing lagging behind by 27ms, your system is too slow
+
+(process:2070): GLib-CRITICAL **: 10:25:13.938: g_string_insert_len: assertion 'len == 0 || val != NULL' failed
+Initializing local storage instance
+(electron) Sending uncompressed crash reports is deprecated and will be removed in a future version of Electron. Set { compress: true } to opt-in to the new behavior. Crash reports will be uploaded gzipped, which most crash reporting servers support.
+[2132:0307/102514.847645:ERROR:sandbox_linux.cc(376)] InitializeSandbox() called with multiple threads in process gpu-process.
+[2098:0307/102514.970238:ERROR:browser_main_loop.cc(269)] Gtk: gtk_widget_add_accelerator: assertion 'GTK_IS_ACCEL_GROUP (accel_group)' failed
+[2098:0307/102514.970352:ERROR:browser_main_loop.cc(269)] Gtk: gtk_widget_add_accelerator: assertion 'GTK_IS_ACCEL_GROUP (accel_group)' failed
+2022-03-07 10:25:15 W: awesome: xerror:1058: X error: request=GetGeometry (major 14, minor 0), error=BadDrawable (9)
+[2098:0307/102515.106124:ERROR:browser_main_loop.cc(269)] Gdk: gdk_window_thaw_toplevel_updates: assertion 'window->update_and_descendants_freeze_count > 0' failed
+[2098:0307/102517.683559:ERROR:browser_main_loop.cc(269)] Gtk: gtk_widget_add_accelerator: assertion 'GTK_IS_ACCEL_GROUP (accel_group)' failed
+[2098:0307/102517.729625:ERROR:browser_main_loop.cc(269)] Gtk: gtk_widget_add_accelerator: assertion 'GTK_IS_ACCEL_GROUP (accel_group)' failed
+[2098:0307/102517.729744:ERROR:browser_main_loop.cc(269)] Gtk: gtk_widget_add_accelerator: assertion 'GTK_IS_ACCEL_GROUP (accel_group)' failed
+nm-applet-Message: 10:25:19.169: No keyring secrets found for NETGEAR69/802-11-wireless-security; asking user.
+(EE) event19 - AT Translated Set 2 keyboard: client bug: event processing lagging behind by 28ms, your system is too slow
+2022-03-07 10:26:27 W: awesome: Trying to destroy the same notification twice. It was destroyed because: 1
+2022-03-07 10:26:27 W: awesome: Trying to destroy the same notification twice. It was destroyed because: 1
+[2098:0307/102639.645285:ERROR:browser_main_loop.cc(269)] Gtk: gtk_widget_add_accelerator: assertion 'GTK_IS_ACCEL_GROUP (accel_group)' failed
+[2098:0307/102639.784540:ERROR:browser_main_loop.cc(269)] Gtk: gtk_widget_add_accelerator: assertion 'GTK_IS_ACCEL_GROUP (accel_group)' failed
+[2098:0307/102639.784721:ERROR:browser_main_loop.cc(269)] Gtk: gtk_widget_add_accelerator: assertion 'GTK_IS_ACCEL_GROUP (accel_group)' failed
+nm-applet-Message: 10:26:40.789: No keyring secrets found for NETGEAR69-5G/802-11-wireless-security; asking user.
+2022-03-07 10:26:41 W: awesome: Trying to destroy the same notification twice. It was destroyed because: 1
+xinit: connection to X server lost
+
+waiting for X server to shut down urxvt: X connection to ':0' broken, unable to recover, exiting.
+(II) Server terminated successfully (0). Closing log file.
+

@@ -290,7 +290,7 @@ myStartupHook = do
     spawnOnce "nm-applet &"
     -- spawnOnce "unclutter -b &"
     spawnOnce "~/.fehbg"
-    spawnOnce "picom -b &"
+    spawnOnce "picom -b --experimental-backends &"
     spawnOnce "mouse_kbd_setup.sh &"
     -- spawnOnce "hsetroot -solid '#121212' &"
     spawnOnce "xsetroot -cursor_name left_ptr &"
@@ -308,7 +308,7 @@ myPP :: PP
 myPP = defaultPP
         { ppCurrent = xmobarColor "#d787af" "" . wrap "[" "]"
         , ppLayout = xmobarColor "#d787af" ""
-        , ppTitle = xmobarColor "#87afdf" ""
+        , ppTitle = xmobarColor "#444444" ""
         }
 
 -- key binding to toggle the gap for the bar

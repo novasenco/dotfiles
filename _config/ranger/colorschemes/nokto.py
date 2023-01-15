@@ -1,6 +1,6 @@
 
 from ranger.gui.colorscheme import ColorScheme
-from ranger.gui.color import reverse, bold, normal
+from ranger.gui.color import reverse, bold, normal, invisible
 
 class Nokto(ColorScheme):
 
@@ -31,10 +31,10 @@ class Nokto(ColorScheme):
     invis         = 233
 
     progress_bar_color = orange
-    default_colors = (fg, bg, normal)
+    default_colors = (fg, -1, normal)
 
     def use(self, context):
-        fg, bg, attr = self.fg, self.bg, normal
+        fg, bg, attr = self.default_colors
 
         if context.reset:
             return self.default_colors
@@ -74,7 +74,7 @@ class Nokto(ColorScheme):
                 if context.device:
                     attr |= bold
             if context.link:
-                fg = self.orange if context.good else self.red
+                fg = self.cyan if context.good else self.red
             if context.bad:
                 bg = self.faint_grey
             if context.tag_marker and not context.selected:
@@ -108,7 +108,7 @@ class Nokto(ColorScheme):
                 if context.good:
                     bg = self.orange
             elif context.link:
-                fg = self.bright_cyan
+                fg = self.cyan
 
         elif context.in_statusbar:
             if context.permissions:
